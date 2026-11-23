@@ -25,7 +25,7 @@
             position: relative;
         }
 
-        /* ============ خلفية نارية ملحمية ============ */
+        /* ============ خلفية نارية ============ */
         .bg-image-fixed {
             position: fixed;
             top: 0; left: 0;
@@ -38,14 +38,13 @@
             width: 100%; height: 100%;
             object-fit: cover;
             animation: slowZoom 30s ease-in-out infinite alternate;
-            filter: brightness(0.35) saturate(1.4) contrast(1.2);
+            filter: brightness(0.3) saturate(1.5) contrast(1.25);
         }
         @keyframes slowZoom {
             0% { transform: scale(1); }
             100% { transform: scale(1.08); }
         }
 
-        /* طبقة لهب ملحمية فوق الخلفية */
         .fire-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -53,10 +52,10 @@
             z-index: 0;
             pointer-events: none;
             background:
-                radial-gradient(ellipse at 50% 100%, rgba(255, 80, 0, 0.35) 0%, transparent 55%),
-                radial-gradient(ellipse at 50% 100%, rgba(255, 160, 0, 0.25) 0%, transparent 40%),
-                radial-gradient(ellipse at 20% 90%, rgba(200, 40, 0, 0.2) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 90%, rgba(200, 40, 0, 0.2) 0%, transparent 50%);
+                radial-gradient(ellipse at 50% 100%, rgba(255, 80, 0, 0.4) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 100%, rgba(255, 160, 0, 0.28) 0%, transparent 40%),
+                radial-gradient(ellipse at 20% 90%, rgba(200, 40, 0, 0.22) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 90%, rgba(200, 40, 0, 0.22) 0%, transparent 50%);
             animation: firePulse 3s ease-in-out infinite alternate;
             mix-blend-mode: screen;
         }
@@ -65,7 +64,6 @@
             100% { opacity: 1; transform: scale(1.03); }
         }
 
-        /* جزيئات شرر متطايرة في الخلفية */
         .embers-layer {
             position: fixed;
             top: 0; left: 0;
@@ -77,44 +75,198 @@
         .ember {
             position: absolute;
             bottom: -20px;
-            width: 4px;
-            height: 4px;
+            width: 4px; height: 4px;
             border-radius: 50%;
             background: radial-gradient(circle, #fff8b0, #ff8c00 40%, #ff2200 80%, transparent);
             box-shadow: 0 0 12px #ff6600, 0 0 24px #ff2200;
             animation: emberRise linear infinite;
         }
         @keyframes emberRise {
-            0% {
-                transform: translateY(0) translateX(0) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
             10% { opacity: 1; }
             85% { opacity: 0.9; }
-            100% {
-                transform: translateY(-110vh) translateX(var(--drift, 40px)) scale(0.2);
-                opacity: 0;
-            }
+            100% { transform: translateY(-110vh) translateX(var(--drift, 40px)) scale(0.2); opacity: 0; }
         }
 
         .user-status { display: none; }
 
-        /* ============ العجلة الملحمية النارية ============ */
+        /* ============================================================
+           العجلة - السيوف خلفها
+           ============================================================ */
         .wheel-wrapper {
             position: relative;
             width: 100%;
-            max-width: 440px;
+            max-width: 480px;
             margin: 0 auto;
             aspect-ratio: 1/1;
             display: none;
             z-index: 1;
-            padding: 30px;
+            padding: 20px;
         }
         .wheel-wrapper.show {
             display: block;
             animation: fadeIn 0.6s ease;
         }
 
+        /* حاوية السيوف خلف العجلة */
+        .swords-behind {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== السيف الواقعي ===== */
+        .sword {
+            position: absolute;
+            width: 26px;
+            height: 130%;
+            top: 50%; left: 50%;
+            transform-origin: center center;
+            filter: drop-shadow(0 0 10px rgba(255, 80, 0, 0.9))
+                    drop-shadow(0 0 30px rgba(255, 40, 0, 0.5));
+        }
+        .sword-left {
+            transform: translate(-50%, -50%) rotate(-42deg) translateY(-12%);
+        }
+        .sword-right {
+            transform: translate(-50%, -50%) rotate(42deg) translateY(-12%);
+        }
+
+        /* المقبض (أسفل السيف) */
+        .sword-grip {
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 22%;
+            background:
+                repeating-linear-gradient(45deg,
+                    #3d1f0a 0px, #3d1f0a 3px,
+                    #5a2e12 3px, #5a2e12 6px,
+                    #2a1405 6px, #2a1405 9px);
+            border-radius: 3px;
+            box-shadow:
+                inset -2px 0 3px rgba(0,0,0,0.7),
+                inset 2px 0 3px rgba(120,80,40,0.3),
+                0 0 6px rgba(0,0,0,0.8);
+            border: 1px solid #1a0d03;
+        }
+        /* رأس المقبض (Pommel) */
+        .sword-pommel {
+            position: absolute;
+            bottom: -12px; left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffdd55 0%, #cc9900 30%, #8b6508 70%, #4a3200 100%);
+            box-shadow:
+                0 0 12px rgba(255, 200, 50, 0.9),
+                0 0 24px rgba(255, 100, 0, 0.6),
+                inset 0 2px 3px rgba(255, 255, 200, 0.5),
+                inset 0 -3px 4px rgba(0,0,0,0.7);
+        }
+        /* الحاجز (Guard) */
+        .sword-guard {
+            position: absolute;
+            bottom: 21%; left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 10px;
+            background: linear-gradient(180deg,
+                #ffdd55 0%,
+                #cc9900 25%,
+                #8b6508 50%,
+                #5a4400 75%,
+                #3a2c00 100%);
+            border-radius: 4px;
+            box-shadow:
+                0 0 12px rgba(255, 200, 50, 0.9),
+                0 0 24px rgba(255, 100, 0, 0.5),
+                inset 0 2px 2px rgba(255, 255, 200, 0.6),
+                inset 0 -2px 3px rgba(0,0,0,0.7);
+        }
+        .sword-guard::before,
+        .sword-guard::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffdd55, #8b6508);
+            transform: translateY(-50%);
+            box-shadow: 0 0 8px rgba(255, 180, 50, 0.9);
+        }
+        .sword-guard::before { left: -6px; }
+        .sword-guard::after { right: -6px; }
+
+        /* النصل (Blade) - أطول جزء */
+        .sword-blade {
+            position: absolute;
+            bottom: 22%; left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 78%;
+            background: linear-gradient(90deg,
+                #1a1a1a 0%,
+                #3a3a3a 12%,
+                #7a7a7a 28%,
+                #c8c8c8 42%,
+                #f0f0f0 50%,
+                #c8c8c8 58%,
+                #7a7a7a 72%,
+                #3a3a3a 88%,
+                #1a1a1a 100%);
+            clip-path: polygon(50% 0%, 88% 3%, 100% 12%, 100% 100%, 0% 100%, 0% 12%, 12% 3%);
+            box-shadow:
+                inset 0 0 6px rgba(0,0,0,0.6),
+                0 0 10px rgba(255, 120, 0, 0.4);
+        }
+        /* حافة النصل المشتعلة */
+        .sword-blade::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg,
+                #ffffff 0%,
+                #ffdd88 15%,
+                #ff8800 35%,
+                #ff4400 55%,
+                #aa1100 75%,
+                transparent 95%);
+            filter: blur(1.5px);
+            box-shadow:
+                0 0 12px #ff6600,
+                0 0 24px #ff3300,
+                0 0 40px #ff1100;
+            animation: bladeFirePulse 1.2s ease-in-out infinite alternate;
+        }
+        @keyframes bladeFirePulse {
+            0% { opacity: 0.75; filter: blur(1.5px) brightness(1); }
+            100% { opacity: 1; filter: blur(2px) brightness(1.4); }
+        }
+        /* دمشق (خطوط النصل) */
+        .sword-blade::after {
+            content: '';
+            position: absolute;
+            top: 8%; left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 84%;
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.4) 0%,
+                rgba(200,200,200,0.6) 50%,
+                rgba(150,150,150,0.4) 100%);
+            filter: blur(0.5px);
+        }
+
+        /* حاوية اللهب حول الإطار */
         .wheel-container {
             position: relative;
             width: 100%;
@@ -125,41 +277,82 @@
             justify-content: center;
         }
 
-        /* ============ الإطار الناري الخارجي - ألسنة لهب ============ */
-        .fire-frame {
+        /* ============================================================
+           لهب الإطار الواقعي - ألسنة اللهب
+           ============================================================ */
+        .fire-flames {
             position: absolute;
-            top: -10px; left: -10px;
-            width: calc(100% + 20px);
-            height: calc(100% + 20px);
+            top: -32px; left: -32px;
+            width: calc(100% + 64px);
+            height: calc(100% + 64px);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 2;
-            background:
-                radial-gradient(circle at 50% 50%,
-                    transparent 62%,
-                    rgba(255, 100, 0, 0.25) 66%,
-                    rgba(255, 60, 0, 0.45) 70%,
-                    rgba(200, 20, 0, 0.6) 74%,
-                    transparent 78%);
-            filter: blur(3px);
-            animation: fireFramePulse 1.8s ease-in-out infinite alternate;
-        }
-        @keyframes fireFramePulse {
-            0% {
-                transform: scale(1) rotate(0deg);
-                filter: blur(3px) brightness(1);
-            }
-            50% {
-                transform: scale(1.01) rotate(1deg);
-                filter: blur(4px) brightness(1.2);
-            }
-            100% {
-                transform: scale(1.02) rotate(-1deg);
-                filter: blur(3px) brightness(1.1);
-            }
+            z-index: 5;
+            overflow: hidden;
         }
 
-        /* إطار داخلي مشتعل */
+        /* كل شعلة لهب */
+        .flame {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 30px;
+            height: 60px;
+            margin-left: -15px;
+            margin-top: -30px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            background: radial-gradient(ellipse at 50% 90%,
+                #fff8b0 0%,
+                #ffdd00 15%,
+                #ff8800 35%,
+                #ff4400 55%,
+                #aa1100 75%,
+                transparent 90%);
+            transform-origin: center bottom;
+            filter: blur(2px);
+            animation: flameDance 1.4s ease-in-out infinite alternate;
+            opacity: 0.9;
+            box-shadow:
+                0 0 20px rgba(255, 100, 0, 0.9),
+                0 0 40px rgba(255, 40, 0, 0.6);
+        }
+        /* شعلة داخلية (أفتح) */
+        .flame::before {
+            content: '';
+            position: absolute;
+            bottom: 5%; left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 55%;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            background: radial-gradient(ellipse at 50% 90%,
+                #ffffff 0%,
+                #fff8b0 20%,
+                #ffdd00 50%,
+                transparent 80%);
+            filter: blur(1px);
+            animation: flameInnerDance 0.9s ease-in-out infinite alternate;
+        }
+
+        @keyframes flameDance {
+            0% {
+                transform: scaleY(1) scaleX(1) rotate(-3deg);
+                filter: blur(2px) brightness(1);
+            }
+            50% {
+                transform: scaleY(1.25) scaleX(0.9) rotate(2deg);
+                filter: blur(2.5px) brightness(1.2);
+            }
+            100% {
+                transform: scaleY(1.1) scaleX(1.05) rotate(-1deg);
+                filter: blur(2px) brightness(1.1);
+            }
+        }
+        @keyframes flameInnerDance {
+            0% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 0.85; }
+            100% { transform: translateX(-50%) scaleY(1.3) scaleX(0.8); opacity: 1; }
+        }
+
+        /* إطار مشتعل أساسي (تحت اللهب) */
         .fire-ring {
             position: absolute;
             top: 0; left: 0;
@@ -167,7 +360,7 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 4;
-            border: 5px solid transparent;
+            border: 6px solid transparent;
             background:
                 linear-gradient(#050302, #050302) padding-box,
                 conic-gradient(from 0deg,
@@ -175,142 +368,173 @@
                     #ff2200, #ff6600, #ffcc00, #ff8800, #ff3300,
                     #ff2200) border-box;
             box-shadow:
-                0 0 25px rgba(255, 80, 0, 0.7),
-                0 0 50px rgba(255, 40, 0, 0.5),
-                0 0 90px rgba(255, 20, 0, 0.3),
-                inset 0 0 30px rgba(255, 100, 0, 0.4);
+                0 0 25px rgba(255, 80, 0, 0.8),
+                0 0 50px rgba(255, 40, 0, 0.6),
+                0 0 90px rgba(255, 20, 0, 0.4),
+                inset 0 0 30px rgba(255, 100, 0, 0.5);
             animation: fireRingRotate 6s linear infinite;
         }
         @keyframes fireRingRotate {
-            0% { transform: rotate(0deg); filter: hue-rotate(0deg); }
-            100% { transform: rotate(360deg); filter: hue-rotate(20deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* هالة نارية خارجية */
+        /* هالة خارجية */
         .fire-halo {
             position: absolute;
-            top: -25px; left: -25px;
-            width: calc(100% + 50px);
-            height: calc(100% + 50px);
+            top: -40px; left: -40px;
+            width: calc(100% + 80px);
+            height: calc(100% + 80px);
             border-radius: 50%;
             pointer-events: none;
             z-index: 1;
             background: radial-gradient(circle,
-                rgba(255, 100, 0, 0.3) 0%,
-                rgba(255, 50, 0, 0.15) 40%,
+                rgba(255, 120, 0, 0.35) 0%,
+                rgba(255, 50, 0, 0.18) 40%,
                 transparent 70%);
-            filter: blur(15px);
+            filter: blur(20px);
             animation: haloPulse 2.5s ease-in-out infinite alternate;
         }
         @keyframes haloPulse {
             0% { opacity: 0.6; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.08); }
+            100% { opacity: 1; transform: scale(1.1); }
         }
 
-        /* ============ السيوف المتقاطعة ============ */
-        .swords-container {
+        /* شرر متصاعد من الإطار */
+        .sparks-layer {
             position: absolute;
-            top: 50%; left: 50%;
-            width: 140%;
-            height: 140%;
-            transform: translate(-50%, -50%);
+            top: -30px; left: -30px;
+            width: calc(100% + 60px);
+            height: calc(100% + 60px);
+            border-radius: 50%;
             pointer-events: none;
-            z-index: 5;
+            z-index: 6;
+            overflow: visible;
         }
-        .sword {
+        .spark {
             position: absolute;
-            top: 50%; left: 50%;
-            width: 12px;
-            height: 75%;
-            transform-origin: center center;
-            filter: drop-shadow(0 0 8px rgba(255, 80, 0, 0.9))
-                    drop-shadow(0 0 20px rgba(255, 40, 0, 0.6));
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff8b0, #ff8800 40%, #ff2200 80%, transparent);
+            box-shadow: 0 0 8px #ff6600, 0 0 16px #ff2200;
+            animation: sparkFloat 2.5s ease-out infinite;
         }
-        .sword-left {
-            transform: translate(-50%, -50%) rotate(-45deg) translateY(-70%);
-        }
-        .sword-right {
-            transform: translate(-50%, -50%) rotate(45deg) translateY(-70%);
+        @keyframes sparkFloat {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-80px) translateX(var(--sx, 0)) scale(0);
+                opacity: 0;
+            }
         }
 
-        .sword-blade {
+        /* ============================================================
+           الرمح (بدل السهم)
+           ============================================================ */
+        .pointer {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 40px;
+            height: 90px;
+            pointer-events: none;
+            filter: drop-shadow(0 0 12px rgba(255, 80, 0, 0.9))
+                    drop-shadow(0 0 30px rgba(255, 40, 0, 0.6));
+            animation: spearBounce 1.6s ease-in-out infinite;
+        }
+        @keyframes spearBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            50% { transform: translateX(-50%) translateY(-6px) rotate(-3deg); }
+        }
+
+        /* رأس الرمح (مثلث معدني) */
+        .spear-tip {
             position: absolute;
             top: 0; left: 50%;
             transform: translateX(-50%);
-            width: 10px;
-            height: 70%;
+            width: 26px;
+            height: 34px;
             background: linear-gradient(90deg,
                 #1a1a1a 0%,
                 #4a4a4a 20%,
-                #d0d0d0 45%,
-                #ffffff 50%,
-                #d0d0d0 55%,
+                #b0b0b0 45%,
+                #f0f0f0 50%,
+                #b0b0b0 55%,
                 #4a4a4a 80%,
                 #1a1a1a 100%);
-            clip-path: polygon(50% 0%, 80% 15%, 80% 100%, 20% 100%, 20% 15%);
-            box-shadow: 0 0 15px rgba(255, 120, 0, 0.8), inset 0 0 8px rgba(255, 200, 100, 0.6);
+            clip-path: polygon(50% 0%, 100% 70%, 100% 100%, 0% 100%, 0% 70%);
+            box-shadow:
+                inset 0 0 6px rgba(0,0,0,0.5),
+                0 0 10px rgba(255, 120, 0, 0.6);
         }
-        .sword-blade::before {
+        .spear-tip::before {
             content: '';
             position: absolute;
-            top: 0; left: 50%;
+            top: 20%; left: 50%;
             transform: translateX(-50%);
-            width: 3px;
-            height: 100%;
-            background: linear-gradient(180deg, #fff 0%, #ff8800 30%, #ff2200 60%, transparent 100%);
-            filter: blur(1px);
-            box-shadow: 0 0 10px #ff6600, 0 0 20px #ff3300;
+            width: 2px;
+            height: 80%;
+            background: linear-gradient(180deg, #fff, #ffaa00, #ff4400);
+            filter: blur(0.8px);
+            box-shadow: 0 0 8px #ff6600, 0 0 16px #ff2200;
         }
-        .sword-blade::after {
-            content: '';
+        /* قاعدة الرمح */
+        .spear-collar {
             position: absolute;
-            top: 0; left: 50%;
+            top: 32px; left: 50%;
             transform: translateX(-50%);
-            width: 100%;
-            height: 30%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.9), transparent);
-            clip-path: polygon(50% 0%, 80% 15%, 80% 100%, 20% 100%, 20% 15%);
-            animation: bladeGlow 1.5s ease-in-out infinite alternate;
-        }
-        @keyframes bladeGlow {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
-
-        .sword-guard {
-            position: absolute;
-            top: 70%; left: 50%;
-            transform: translateX(-50%);
-            width: 32px;
+            width: 30px;
             height: 8px;
-            background: linear-gradient(180deg, #ffcc00, #b8860b, #8b6508);
-            border-radius: 3px;
-            box-shadow: 0 0 10px rgba(255, 180, 0, 0.9), inset 0 0 5px rgba(0,0,0,0.5);
+            background: linear-gradient(180deg, #ffdd55, #8b6508, #3a2c00);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(255, 180, 50, 0.9);
         }
-        .sword-handle {
+        /* عمود الرمح */
+        .spear-shaft {
             position: absolute;
-            top: 78%; left: 50%;
+            top: 38px; left: 50%;
             transform: translateX(-50%);
             width: 8px;
-            height: 18%;
-            background: repeating-linear-gradient(0deg,
-                #2a1a0a, #2a1a0a 3px,
-                #4a2a0a 3px, #4a2a0a 6px);
-            border-radius: 2px;
-            box-shadow: 0 0 6px rgba(0,0,0,0.8);
+            height: 42px;
+            background: linear-gradient(90deg,
+                #2a1a0a 0%,
+                #5a3a1a 25%,
+                #8a5a2a 50%,
+                #5a3a1a 75%,
+                #2a1a0a 100%);
+            border-radius: 1px;
+            box-shadow:
+                inset -1px 0 2px rgba(0,0,0,0.7),
+                inset 1px 0 2px rgba(120,80,40,0.4);
         }
-        .sword-pommel {
+        /* ريش الرمح */
+        .spear-feather {
             position: absolute;
             bottom: 0; left: 50%;
             transform: translateX(-50%);
-            width: 14px;
+            width: 34px;
             height: 14px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffcc00, #b8860b 60%, #4a2a00);
-            box-shadow: 0 0 10px rgba(255, 180, 0, 0.9);
+            background: linear-gradient(180deg, #8b0000 0%, #cc2200 50%, #ff4400 100%);
+            clip-path: polygon(0% 100%, 15% 0%, 85% 0%, 100% 100%, 85% 60%, 15% 60%);
+            filter: drop-shadow(0 0 6px rgba(255, 60, 0, 0.8));
+        }
+        .spear-feather::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(90deg,
+                transparent 0px, transparent 3px,
+                rgba(0,0,0,0.3) 3px, rgba(0,0,0,0.3) 4px);
         }
 
-        /* ============ الفقاعات النارية (شرر) ============ */
+        /* ============================================================
+           الشرر المتوهج حول العجلة
+           ============================================================ */
         .glow-bubbles-container {
             position: absolute;
             top: 0; left: 0;
@@ -345,7 +569,6 @@
         .glow-bubble:nth-child(7) { width: 7px; height: 7px; top: 72%; left: 22%; animation-duration: 5.5s; animation-delay: 0.3s; }
         .glow-bubble:nth-child(8) { width: 13px; height: 13px; top: 68%; right: 20%; animation-duration: 7s; animation-delay: 2.5s; }
 
-        /* ============ اللوحة ============ */
         .wheel-wrapper canvas {
             width: 100% !important;
             height: 100% !important;
@@ -364,25 +587,6 @@
         .wheel-wrapper canvas.spinning {
             filter: brightness(1.2) contrast(1.1)
                     drop-shadow(0 0 40px rgba(255, 80, 0, 0.6));
-        }
-
-        /* ============ السهم الناري ============ */
-        .pointer {
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            font-size: 40px;
-            filter: drop-shadow(0 0 15px rgba(255, 80, 0, 0.9))
-                    drop-shadow(0 0 30px rgba(255, 40, 0, 0.7));
-            animation: pointerBounce 1.5s ease-in-out infinite;
-            pointer-events: none;
-            text-shadow: 0 0 20px #ff6600;
-        }
-        @keyframes pointerBounce {
-            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
-            50% { transform: translateX(-50%) translateY(-8px) scale(1.05); }
         }
 
         @keyframes fadeIn {
@@ -406,7 +610,6 @@
             z-index: 1;
         }
 
-        /* ============ الأزرار ============ */
         .actions {
             display: flex;
             flex-direction: column;
@@ -492,7 +695,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ============ إشعار الإيداع ============ */
         .deposit-notice {
             background: rgba(20, 5, 0, 0.9);
             border: 1px solid rgba(255, 80, 0, 0.3);
@@ -518,16 +720,9 @@
             text-shadow: 0 0 10px rgba(255, 200, 0, 0.8);
         }
         .deposit-notice .notice-status { font-size: 13px; margin-top: 4px; color: #888; }
-        .deposit-notice .notice-status .met {
-            color: #00ff88;
-            text-shadow: 0 0 8px rgba(0, 255, 100, 0.6);
-        }
-        .deposit-notice .notice-status .not-met {
-            color: #ff4444;
-            text-shadow: 0 0 8px rgba(255, 60, 60, 0.6);
-        }
+        .deposit-notice .notice-status .met { color: #00ff88; text-shadow: 0 0 8px rgba(0, 255, 100, 0.6); }
+        .deposit-notice .notice-status .not-met { color: #ff4444; text-shadow: 0 0 8px rgba(255, 60, 60, 0.6); }
 
-        /* ============ صندوق النتيجة الناري ============ */
         .result-box {
             background: rgba(20, 5, 0, 0.92);
             border: 1px solid rgba(255, 80, 0, 0.3);
@@ -617,7 +812,6 @@
             50% { background-position: 100% 50%; }
         }
 
-        /* ============ رسائل الخطأ ============ */
         .error-msg {
             background: rgba(20, 5, 0, 0.92);
             border: 1px solid rgba(255, 0, 0, 0.3);
@@ -642,7 +836,6 @@
             animation: fadeIn 0.3s ease;
         }
 
-        /* ============ شاشة اللودينغ ============ */
         .loading-screen {
             display: none;
             position: fixed;
@@ -717,7 +910,6 @@
             text-shadow: 0 0 10px rgba(255, 100, 0, 0.8);
         }
 
-        /* ============ إعدادات الصوت ============ */
         .sound-settings {
             display: flex;
             justify-content: center;
@@ -756,7 +948,6 @@
             filter: drop-shadow(0 0 6px rgba(255, 100, 0, 0.8));
         }
 
-        /* ============ لوحة الإدارة ============ */
         .admin-panel {
             display: none;
             background: rgba(20, 5, 0, 0.92);
@@ -1073,7 +1264,6 @@
             color: #00ff88;
         }
 
-        /* ============ حاوية الخطأ ============ */
         .error-container {
             display: none;
             text-align: center;
@@ -1132,7 +1322,6 @@
             box-shadow: 0 0 40px rgba(255, 120, 0, 0.9);
         }
 
-        /* ============ شريط الإشعار ============ */
         .notification-bar {
             display: none;
             position: fixed;
@@ -1165,11 +1354,9 @@
             100% { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
 
-        /* ============ استجابة الجوال ============ */
         @media (max-width: 480px) {
             .btn { font-size: 16px; padding: 14px 16px; }
             .btn-spin { font-size: 17px; }
-            .pointer { font-size: 32px; top: -18px; }
             .result-box .prize-desc { font-size: 20px; }
             .result-box.winner .prize-desc { font-size: 24px; }
             .admin-panel .prize-item { flex-direction: column; align-items: stretch; }
@@ -1181,30 +1368,29 @@
             .admin-panel .prize-item .prize-info { min-width: 70px; }
             .admin-panel .prize-item .prize-prob .prob-input { width: 38px; }
             .sound-settings { gap: 12px; padding: 4px 12px; }
-            .wheel-wrapper { padding: 22px; }
-            .swords-container { width: 130%; height: 130%; }
+            .wheel-wrapper { padding: 15px; }
+            .pointer { width: 32px; height: 72px; top: -40px; }
+            .spear-tip { width: 22px; height: 28px; }
+            .spear-collar { width: 26px; top: 26px; }
+            .spear-shaft { top: 32px; height: 34px; }
+            .spear-feather { width: 28px; height: 12px; }
         }
 
         @media (max-width: 380px) {
             .btn-spin { font-size: 15px; padding: 12px 14px; }
             .result-box .prize-desc { font-size: 17px; }
             .result-box.winner .prize-desc { font-size: 20px; }
-            .pointer { font-size: 28px; top: -16px; }
-            .wheel-wrapper { padding: 18px; }
+            .wheel-wrapper { padding: 12px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- خلفية -->
     <div class="bg-image-fixed">
         <img id="bgImage" src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1920&q=80" alt="Background">
     </div>
 
-    <!-- طبقة اللهب الملحمية -->
     <div class="fire-overlay"></div>
-
-    <!-- جزيئات الشرر المتطايرة -->
     <div class="embers-layer" id="embersLayer"></div>
 
     <div class="notification-bar" id="notificationBar">
@@ -1233,35 +1419,37 @@
         </div>
     </div>
 
-    <!-- ===== العجلة الملحمية ===== -->
+    <!-- ===== العجلة ===== -->
     <div class="wheel-wrapper" id="wheelWrapper">
+        <!-- السيوف خلف العجلة -->
+        <div class="swords-behind">
+            <div class="sword sword-left">
+                <div class="sword-blade"></div>
+                <div class="sword-guard"></div>
+                <div class="sword-grip"></div>
+                <div class="sword-pommel"></div>
+            </div>
+            <div class="sword sword-right">
+                <div class="sword-blade"></div>
+                <div class="sword-guard"></div>
+                <div class="sword-grip"></div>
+                <div class="sword-pommel"></div>
+            </div>
+        </div>
+
         <div class="wheel-container">
-            <!-- هالة نارية -->
             <div class="fire-halo"></div>
 
-            <!-- الإطار الناري الخارجي -->
-            <div class="fire-frame"></div>
+            <!-- ألسنة اللهب حول الإطار -->
+            <div class="fire-flames" id="fireFlames"></div>
 
-            <!-- السيوف المتقاطعة -->
-            <div class="swords-container">
-                <div class="sword sword-left">
-                    <div class="sword-blade"></div>
-                    <div class="sword-guard"></div>
-                    <div class="sword-handle"></div>
-                    <div class="sword-pommel"></div>
-                </div>
-                <div class="sword sword-right">
-                    <div class="sword-blade"></div>
-                    <div class="sword-guard"></div>
-                    <div class="sword-handle"></div>
-                    <div class="sword-pommel"></div>
-                </div>
-            </div>
+            <!-- شرر متصاعد من الإطار -->
+            <div class="sparks-layer" id="sparksLayer"></div>
 
-            <!-- الإطار الناري الداخلي -->
+            <!-- الإطار المشتعل الأساسي -->
             <div class="fire-ring"></div>
 
-            <!-- الشرر الناري -->
+            <!-- الشرر المتوهج -->
             <div class="glow-bubbles-container">
                 <div class="glow-bubble"></div>
                 <div class="glow-bubble"></div>
@@ -1273,11 +1461,16 @@
                 <div class="glow-bubble"></div>
             </div>
 
-            <!-- السهم -->
-            <div class="pointer" id="pointer">🔻</div>
+            <!-- الرمح -->
+            <div class="pointer" id="pointer">
+                <div class="spear-tip"></div>
+                <div class="spear-collar"></div>
+                <div class="spear-shaft"></div>
+                <div class="spear-feather"></div>
+            </div>
 
             <!-- اللوحة -->
-            <canvas id="wheelCanvas" width="500" height="500"></canvas>
+            <canvas id="wheelCanvas" width="600" height="600"></canvas>
         </div>
     </div>
 
@@ -1409,15 +1602,15 @@
         let soundEnabled = true;
         let settingsCache = {};
         let spinDuration = 3500;
+        let prizesLoaded = false;
 
         // ================================================================
-        //   توليد جزيئات الشرر في الخلفية (ميزة بصرية فقط)
+        //   توليد جزيئات الشرر في الخلفية
         // ================================================================
         (function spawnEmbers() {
             const layer = document.getElementById('embersLayer');
             if (!layer) return;
-            const emberCount = 30;
-            for (let i = 0; i < emberCount; i++) {
+            for (let i = 0; i < 30; i++) {
                 const e = document.createElement('div');
                 e.className = 'ember';
                 const size = 2 + Math.random() * 5;
@@ -1432,6 +1625,53 @@
         })();
 
         // ================================================================
+        //   توليد ألسنة اللهب حول الإطار (16 شعلة)
+        // ================================================================
+        (function spawnFlames() {
+            const container = document.getElementById('fireFlames');
+            if (!container) return;
+            const count = 18;
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * 360;
+                const flame = document.createElement('div');
+                flame.className = 'flame';
+                const rad = (angle - 90) * Math.PI / 180;
+                const radius = 50; // نسبة من المركز
+                flame.style.left = (50 + Math.cos(rad) * radius) + '%';
+                flame.style.top = (50 + Math.sin(rad) * radius) + '%';
+                // rotate outward
+                flame.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg) translateY(-10px)`;
+                flame.style.animationDelay = (i * 0.13) + 's';
+                flame.style.animationDuration = (1.1 + Math.random() * 0.6) + 's';
+                const scale = 0.75 + Math.random() * 0.5;
+                flame.style.width = (28 * scale) + 'px';
+                flame.style.height = (58 * scale) + 'px';
+                container.appendChild(flame);
+            }
+        })();
+
+        // ================================================================
+        //   توليد الشرر المتصاعد من الإطار (24 شرارة)
+        // ================================================================
+        (function spawnSparks() {
+            const container = document.getElementById('sparksLayer');
+            if (!container) return;
+            for (let i = 0; i < 24; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                const angle = Math.random() * 360;
+                const rad = angle * Math.PI / 180;
+                const radius = 48;
+                spark.style.left = (50 + Math.cos(rad) * radius) + '%';
+                spark.style.top = (50 + Math.sin(rad) * radius) + '%';
+                spark.style.animationDelay = (Math.random() * 2.5) + 's';
+                spark.style.animationDuration = (1.8 + Math.random() * 1.5) + 's';
+                spark.style.setProperty('--sx', (Math.random() * 60 - 30) + 'px');
+                container.appendChild(spark);
+            }
+        })();
+
+        // ================================================================
         //                      نظام إعادة محاولة الاتصال
         // ================================================================
         class ConnectionManager {
@@ -1440,11 +1680,9 @@
                 this.retryDelay = 2000;
                 this.timeout = 50000;
             }
-
             async fetchWithRetry(url, options = {}, retryCount = 0) {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
                 try {
                     const response = await fetch(url, { ...options, signal: controller.signal });
                     clearTimeout(timeoutId);
@@ -1452,9 +1690,7 @@
                     return response;
                 } catch (error) {
                     clearTimeout(timeoutId);
-                    if (error.name === 'AbortError') {
-                        throw new Error('انتهت مهلة الاتصال بالخادم (50 ثانية)');
-                    }
+                    if (error.name === 'AbortError') throw new Error('انتهت مهلة الاتصال بالخادم (50 ثانية)');
                     if (retryCount < this.maxRetries) {
                         const delay = this.retryDelay * (retryCount + 1);
                         console.log(`محاولة إعادة الاتصال ${retryCount + 1}/${this.maxRetries} بعد ${delay}ms`);
@@ -1465,166 +1701,232 @@
                 }
             }
         }
-
         const connectionManager = new ConnectionManager();
 
         // ================================================================
-        //                      نظام الصوت
+        //   نظام الصوت الملحمي (نيران، انفجارات، حرق)
         // ================================================================
-        class AdvancedSoundManager {
+        class FireSoundManager {
             constructor() {
                 this.initialized = false;
                 this.audioContext = null;
-                this.isPlaying = false;
-                this.spinSoundInterval = null;
+                this.spinNode = null;
+                this.noiseBuffer = null;
             }
             init() {
                 if (this.initialized) return;
                 try {
                     this.audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                    // بناء مخزن noise للهب
+                    const bufferSize = this.audioContext.sampleRate * 2;
+                    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+                    this.noiseBuffer = buffer;
                     this.initialized = true;
                 } catch (e) { console.warn('Web Audio not supported'); }
             }
             stopAll() {
-                this.stopSpinSound();
-                if (this.audioContext) {
-                    try {
-                        this.audioContext.close();
-                        this.audioContext = new(window.AudioContext || window.webkitAudioContext)();
-                    } catch (e) {}
+                if (this.spinNode) {
+                    try { this.spinNode.stop(); } catch (e) {}
+                    this.spinNode = null;
                 }
-                this.isPlaying = false;
             }
+            // هدير اللهب أثناء التدوير
             playSpinSound() {
                 if (!soundEnabled || !this.initialized) return;
-                this.stopSpinSound();
+                this.stopAll();
                 try {
                     const ctx = this.audioContext;
+                    const source = ctx.createBufferSource();
+                    source.buffer = this.noiseBuffer;
+                    source.loop = true;
+
+                    // فلتر لتشكيل صوت الهب
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(800, ctx.currentTime);
+                    filter.frequency.linearRampToValueAtTime(400, ctx.currentTime + 3);
+
+                    const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.5);
+                    gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 3.5);
+
+                    // LFO لتذبذب صوت اللهب
+                    const lfo = ctx.createOscillator();
+                    lfo.frequency.setValueAtTime(8, ctx.currentTime);
+                    lfo.type = 'sine';
+                    const lfoGain = ctx.createGain();
+                    lfoGain.gain.setValueAtTime(200, ctx.currentTime);
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(filter.frequency);
+
+                    source.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    source.start();
+                    lfo.start();
+
+                    this.spinNode = source;
+                    setTimeout(() => {
+                        try {
+                            source.stop();
+                            lfo.stop();
+                        } catch (e) {}
+                        this.spinNode = null;
+                    }, 4500);
+
+                    // صوت شرر خفيف كل 120ms
                     let count = 0;
-                    this.spinSoundInterval = setInterval(() => {
-                        if (!soundEnabled || !this.initialized) { this.stopSpinSound(); return; }
+                    this.spinInterval = setInterval(() => {
+                        if (!soundEnabled) { clearInterval(this.spinInterval); return; }
                         try {
                             const t = ctx.currentTime;
                             const osc = ctx.createOscillator();
-                            const gain = ctx.createGain();
-                            osc.connect(gain);
-                            gain.connect(ctx.destination);
-                            const freq = 180 + Math.sin(count * 0.7) * 25 + Math.sin(count * 0.3) * 15;
-                            osc.frequency.setValueAtTime(freq, t);
-                            osc.type = 'sine';
-                            gain.gain.setValueAtTime(0.025, t);
-                            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+                            const g = ctx.createGain();
+                            osc.connect(g);
+                            g.connect(ctx.destination);
+                            osc.frequency.setValueAtTime(800 + Math.random() * 1200, t);
+                            osc.type = 'triangle';
+                            g.gain.setValueAtTime(0.02, t);
+                            g.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
                             osc.start(t);
-                            osc.stop(t + 0.07);
+                            osc.stop(t + 0.06);
                             count++;
+                            if (count > 35) clearInterval(this.spinInterval);
                         } catch (e) {}
-                    }, 110);
-                    setTimeout(() => this.stopSpinSound(), 6000);
-                } catch (e) {}
+                    }, 120);
+                } catch (e) { console.warn('spin sound err', e); }
             }
-            stopSpinSound() {
-                if (this.spinSoundInterval) {
-                    clearInterval(this.spinSoundInterval);
-                    this.spinSoundInterval = null;
-                }
-            }
+            // صوت فوز ملحمي: طبل + صرخة + انفجار + رعد
             playWinSound() {
                 if (!soundEnabled || !this.initialized) return;
                 try {
                     const ctx = this.audioContext;
                     const now = ctx.currentTime;
-                    const notes = [
-                        [523, 0.2, 0.06],[587, 0.2, 0.06],[659, 0.2, 0.06],[784, 0.3, 0.07],
-                        [659, 0.2, 0.06],[784, 0.2, 0.06],[880, 0.2, 0.06],[988, 0.35, 0.08],
-                        [880, 0.2, 0.06],[784, 0.2, 0.06],[880, 0.2, 0.06],[1175, 0.4, 0.09]
+
+                    // 1) انفجار اللهب (noise burst)
+                    const burst = ctx.createBufferSource();
+                    burst.buffer = this.noiseBuffer;
+                    const bFilter = ctx.createBiquadFilter();
+                    bFilter.type = 'lowpass';
+                    bFilter.frequency.setValueAtTime(2000, now);
+                    bFilter.frequency.exponentialRampToValueAtTime(200, now + 0.6);
+                    const bGain = ctx.createGain();
+                    bGain.gain.setValueAtTime(0.25, now);
+                    bGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                    burst.connect(bFilter);
+                    bFilter.connect(bGain);
+                    bGain.connect(ctx.destination);
+                    burst.start(now);
+                    burst.stop(now + 0.7);
+
+                    // 2) نغمة انتصار صاعدة
+                    const melody = [
+                        [392, 0.18], [523, 0.18], [659, 0.18],
+                        [784, 0.25], [1047, 0.35], [1319, 0.5]
                     ];
-                    notes.forEach(([freq, dur, vol], i) => {
+                    melody.forEach(([freq, dur], i) => {
+                        const start = now + 0.15 + i * 0.16;
                         const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.frequency.setValueAtTime(freq, now + i * 0.08);
-                        osc.type = i % 2 === 0 ? 'sine' : 'triangle';
-                        gain.gain.setValueAtTime(vol || 0.05, now + i * 0.08);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + dur);
-                        osc.start(now + i * 0.08);
-                        osc.stop(now + i * 0.08 + dur);
+                        const g = ctx.createGain();
+                        osc.connect(g);
+                        g.connect(ctx.destination);
+                        osc.type = i < 3 ? 'sawtooth' : 'square';
+                        osc.frequency.setValueAtTime(freq, start);
+                        g.gain.setValueAtTime(0.0, start);
+                        g.gain.linearRampToValueAtTime(0.08, start + 0.02);
+                        g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+                        osc.start(start);
+                        osc.stop(start + dur);
                     });
-                    setTimeout(() => {
-                        const t = ctx.currentTime;
-                        [523, 587, 659, 784].forEach((freq, i) => {
-                            const osc = ctx.createOscillator();
-                            const gain = ctx.createGain();
-                            osc.connect(gain);
-                            gain.connect(ctx.destination);
-                            osc.frequency.setValueAtTime(freq, t + i * 0.07);
-                            osc.type = 'sine';
-                            gain.gain.setValueAtTime(0.025, t + i * 0.07);
-                            gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.07 + 0.25);
-                            osc.start(t + i * 0.07);
-                            osc.stop(t + i * 0.07 + 0.25);
-                        });
-                    }, notes.length * 0.08 + 0.1);
-                    setTimeout(() => { this.isPlaying = false; }, 3000);
-                } catch (e) { this.isPlaying = false; }
+
+                    // 3) هدير ناري مستمر لفترة
+                    const roar = ctx.createBufferSource();
+                    roar.buffer = this.noiseBuffer;
+                    const rFilter = ctx.createBiquadFilter();
+                    rFilter.type = 'bandpass';
+                    rFilter.frequency.setValueAtTime(300, now + 1);
+                    rFilter.Q.setValueAtTime(0.8, now + 1);
+                    const rGain = ctx.createGain();
+                    rGain.gain.setValueAtTime(0.0, now + 1);
+                    rGain.gain.linearRampToValueAtTime(0.08, now + 1.3);
+                    rGain.gain.exponentialRampToValueAtTime(0.001, now + 3);
+                    roar.connect(rFilter);
+                    rFilter.connect(rGain);
+                    rGain.connect(ctx.destination);
+                    roar.start(now + 1);
+                    roar.stop(now + 3);
+                } catch (e) { console.warn('win sound err', e); }
             }
+            // صوت خسارة: حرق + تلاشي
             playLoseSound() {
                 if (!soundEnabled || !this.initialized) return;
                 try {
                     const ctx = this.audioContext;
                     const now = ctx.currentTime;
-                    const notes = [[440, 0.35, 0.04],[370, 0.35, 0.04],[330, 0.45, 0.05],[247, 0.6, 0.05]];
-                    notes.forEach(([freq, dur, vol], i) => {
+
+                    // صوت حرق (noise منخفض)
+                    const burn = ctx.createBufferSource();
+                    burn.buffer = this.noiseBuffer;
+                    const bF = ctx.createBiquadFilter();
+                    bF.type = 'lowpass';
+                    bF.frequency.setValueAtTime(1000, now);
+                    bF.frequency.exponentialRampToValueAtTime(120, now + 1.2);
+                    const bG = ctx.createGain();
+                    bG.gain.setValueAtTime(0.12, now);
+                    bG.gain.exponentialRampToValueAtTime(0.001, now + 1.3);
+                    burn.connect(bF);
+                    bF.connect(bG);
+                    bG.connect(ctx.destination);
+                    burn.start(now);
+                    burn.stop(now + 1.3);
+
+                    // نغمة هبوط حزينة
+                    const notes = [[392, 0.3], [311, 0.35], [261, 0.4], [196, 0.6]];
+                    notes.forEach(([freq, dur], i) => {
+                        const start = now + i * 0.25;
                         const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.frequency.setValueAtTime(freq, now + i * 0.25);
+                        const g = ctx.createGain();
+                        osc.connect(g);
+                        g.connect(ctx.destination);
                         osc.type = 'sawtooth';
-                        gain.gain.setValueAtTime(vol || 0.04, now + i * 0.25);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.25 + dur);
-                        osc.start(now + i * 0.25);
-                        osc.stop(now + i * 0.25 + dur);
+                        osc.frequency.setValueAtTime(freq, start);
+                        osc.frequency.exponentialRampToValueAtTime(freq * 0.7, start + dur);
+                        g.gain.setValueAtTime(0.07, start);
+                        g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+                        osc.start(start);
+                        osc.stop(start + dur);
                     });
-                    setTimeout(() => {
-                        const t = ctx.currentTime;
-                        const osc2 = ctx.createOscillator();
-                        const gain2 = ctx.createGain();
-                        osc2.connect(gain2);
-                        gain2.connect(ctx.destination);
-                        osc2.frequency.setValueAtTime(200, t);
-                        osc2.frequency.exponentialRampToValueAtTime(100, t + 0.7);
-                        osc2.type = 'sawtooth';
-                        gain2.gain.setValueAtTime(0.02, t);
-                        gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
-                        osc2.start(t);
-                        osc2.stop(t + 0.7);
-                    }, notes.length * 0.25 + 0.1);
-                    setTimeout(() => { this.isPlaying = false; }, 2000);
-                } catch (e) { this.isPlaying = false; }
+                } catch (e) { console.warn('lose sound err', e); }
             }
             playStartSound() {
                 if (!soundEnabled || !this.initialized) return;
                 try {
                     const ctx = this.audioContext;
                     const now = ctx.currentTime;
-                    [440, 554, 659].forEach((freq, i) => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.frequency.setValueAtTime(freq, now + i * 0.1);
-                        osc.type = 'sine';
-                        gain.gain.setValueAtTime(0.02, now + i * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.12);
-                        osc.start(now + i * 0.1);
-                        osc.stop(now + i * 0.1 + 0.12);
-                    });
-                } catch (e) {}
+                    // صوت إشعال النار "fwoosh"
+                    const noise = ctx.createBufferSource();
+                    noise.buffer = this.noiseBuffer;
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'highpass';
+                    filter.frequency.setValueAtTime(400, now);
+                    filter.frequency.exponentialRampToValueAtTime(3000, now + 0.5);
+                    const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.0, now);
+                    gain.gain.linearRampToValueAtTime(0.15, now + 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(ctx.destination);
+                    noise.start(now);
+                    noise.stop(now + 0.5);
+                } catch (e) { console.warn('start sound err', e); }
             }
         }
-
-        const soundManager = new AdvancedSoundManager();
+        const soundManager = new FireSoundManager();
 
         // ================================================================
         //                      جلب USER_ID
@@ -1653,8 +1955,9 @@
         }
 
         // ================================================================
-        //                      رسم العجلة (بنفس المنطق)
-        // ================================================================
+        // ============================================================
+        //  رسم العجلة مع أقسام الحمم البركانية
+        // ============================================================
         function drawWheel(prizes, highlightIndex = -1, rotation = 0) {
             const canvas = document.getElementById('wheelCanvas');
             const ctx = canvas.getContext('2d');
@@ -1676,92 +1979,197 @@
             const total = prizes.length;
             const step = (2 * Math.PI) / total;
 
+            // خلفية دائرية سوداء
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+            bgGrad.addColorStop(0, '#1a0805');
+            bgGrad.addColorStop(1, '#050302');
+            ctx.fillStyle = bgGrad;
+            ctx.fill();
+
             prizes.forEach((p, i) => {
                 const start = i * step + rotation - Math.PI / 2;
                 const end = start + step;
                 const isHighlight = (i === highlightIndex);
 
+                // ====== رسم قطاع الحمم البركانية ======
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, r, start, end);
                 ctx.closePath();
 
-                const color1 = p.color || '#1a1a2e';
-                const color2 = p.color2 || '#16213e';
+                // تدرج الحمم البركانية (من المركز للخارج)
                 const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-
                 if (isHighlight) {
-                    grad.addColorStop(0, '#FFD700');
-                    grad.addColorStop(0.5, '#FF8C00');
-                    grad.addColorStop(1, '#B8860B');
+                    // عندما يكون مضاء (فائز)
+                    grad.addColorStop(0, '#fff5b0');
+                    grad.addColorStop(0.2, '#ffdd00');
+                    grad.addColorStop(0.5, '#ff8800');
+                    grad.addColorStop(0.8, '#ff4400');
+                    grad.addColorStop(1, '#aa1100');
                 } else {
-                    grad.addColorStop(0, color1);
-                    grad.addColorStop(1, color2);
+                    // ألوان الحمم الداكنة مع لمسة من لون الجائزة المخصص
+                    const c1 = p.color || '#3a0a00';
+                    const c2 = p.color2 || '#1a0500';
+                    grad.addColorStop(0, c1);
+                    grad.addColorStop(0.3, c2);
+                    grad.addColorStop(0.65, '#2a0800');
+                    grad.addColorStop(1, '#0a0200');
                 }
                 ctx.fillStyle = grad;
                 ctx.fill();
 
-                if (isHighlight) {
-                    ctx.shadowColor = '#FFD700';
-                    ctx.shadowBlur = 50;
-                } else {
-                    ctx.shadowColor = 'transparent';
+                // ====== خطوط الحمم (lava veins) داخل كل قطاع ======
+                if (!isHighlight) {
+                    ctx.save();
+                    ctx.clip(); // يقص على القطاع
+                    // 3-4 شقوق حمم عشوائية
+                    const veinCount = 3 + (i % 3);
+                    for (let v = 0; v < veinCount; v++) {
+                        const angleOffset = start + step * (0.15 + v * 0.22);
+                        const rStart = r * (0.2 + Math.random() * 0.15);
+                        const rEnd = r * (0.85 + Math.random() * 0.1);
+                        const x1 = cx + Math.cos(angleOffset) * rStart;
+                        const y1 = cy + Math.sin(angleOffset) * rStart;
+                        const x2 = cx + Math.cos(angleOffset + (Math.random() - 0.5) * 0.15) * rEnd;
+                        const y2 = cy + Math.sin(angleOffset + (Math.random() - 0.5) * 0.15) * rEnd;
+
+                        // توهج خلفي
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.strokeStyle = 'rgba(255, 80, 0, 0.5)';
+                        ctx.lineWidth = 4;
+                        ctx.shadowColor = '#ff4400';
+                        ctx.shadowBlur = 12;
+                        ctx.stroke();
+
+                        // خط الحمم الأساسي
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.strokeStyle = '#ffcc00';
+                        ctx.lineWidth = 1.5;
+                        ctx.shadowColor = '#ffaa00';
+                        ctx.shadowBlur = 6;
+                        ctx.stroke();
+
+                        // نقاط حمم متوهجة
+                        ctx.beginPath();
+                        ctx.arc(x1 + (x2 - x1) * 0.5, y1 + (y2 - y1) * 0.5, 2.5, 0, Math.PI * 2);
+                        ctx.fillStyle = '#ffee88';
+                        ctx.shadowColor = '#ffaa00';
+                        ctx.shadowBlur = 8;
+                        ctx.fill();
+                    }
+                    ctx.restore();
                     ctx.shadowBlur = 0;
                 }
 
-                ctx.strokeStyle = isHighlight ? '#FFD700' : 'rgba(255,215,0,0.05)';
-                ctx.lineWidth = isHighlight ? 2.5 : 0.5;
+                // حدود القطاع
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, start, end);
+                ctx.closePath();
+                ctx.strokeStyle = isHighlight
+                    ? 'rgba(255, 220, 100, 1)'
+                    : 'rgba(255, 100, 0, 0.55)';
+                ctx.lineWidth = isHighlight ? 3 : 1.5;
+                ctx.shadowColor = isHighlight ? '#ffdd00' : '#ff4400';
+                ctx.shadowBlur = isHighlight ? 25 : 6;
                 ctx.stroke();
                 ctx.shadowBlur = 0;
 
+                // ====== الأيقونة (الحائز) ======
                 const mid = start + step / 2;
-                const tr = r * 0.62;
+                const tr = r * 0.68;
                 const x = cx + Math.cos(mid) * tr;
                 const y = cy + Math.sin(mid) * tr;
 
                 ctx.save();
                 ctx.translate(x, y);
-                ctx.rotate(mid + (mid > Math.PI / 2 ? Math.PI : 0));
-                ctx.fillStyle = isHighlight ? '#0a0a0a' : '#fff';
-                ctx.font = isHighlight ? 'bold 19px sans-serif' : '17px sans-serif';
+                // جعل الأيقونة أفقية دائماً
+                let rotationFix = 0;
+                if (mid > Math.PI / 2 && mid < 3 * Math.PI / 2) {
+                    rotationFix = Math.PI;
+                }
+                ctx.rotate(mid + rotationFix);
+
+                // ظل توهج خلفي للأيقونة
+                ctx.shadowColor = isHighlight ? '#ffdd00' : '#ff6600';
+                ctx.shadowBlur = isHighlight ? 25 : 12;
+
+                const iconSize = isHighlight ? 34 : 30;
+                ctx.font = `bold ${iconSize}px sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.shadowColor = 'rgba(0,0,0,0.8)';
-                ctx.shadowBlur = 8;
+                ctx.fillStyle = isHighlight ? '#ffffff' : '#ffe0a0';
                 ctx.fillText(p.icon || '🎁', 0, 0);
+
                 ctx.shadowBlur = 0;
                 ctx.restore();
+
+                // ====== القيمة/الوصف (نص صغير تحت الأيقونة) ======
+                if (p.description) {
+                    const textR = r * 0.88;
+                    const tx = cx + Math.cos(mid) * textR;
+                    const ty = cy + Math.sin(mid) * textR;
+
+                    ctx.save();
+                    ctx.translate(tx, ty);
+                    let textRotationFix = 0;
+                    if (mid > Math.PI / 2 && mid < 3 * Math.PI / 2) {
+                        textRotationFix = Math.PI;
+                    }
+                    ctx.rotate(mid + textRotationFix);
+                    ctx.font = 'bold 13px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = isHighlight ? '#0a0505' : '#ffddaa';
+                    ctx.shadowColor = isHighlight ? '#fff5b0' : '#000000';
+                    ctx.shadowBlur = 6;
+                    // اقتطاع النص الطويل
+                    let txt = p.description;
+                    if (txt.length > 14) txt = txt.substring(0, 14) + '…';
+                    ctx.fillText(txt, 0, 0);
+                    ctx.shadowBlur = 0;
+                    ctx.restore();
+                }
             });
 
+            // ====== المركز (شمس مشتعلة) ======
             const centerR = r * 0.16;
-            const centerIcon = settingsCache.center_icon || '⭐';
+            const centerIcon = settingsCache.center_icon || '🔥';
 
-            const grad = ctx.createRadialGradient(cx - 4, cy - 4, 0, cx, cy, centerR);
-            grad.addColorStop(0, '#FFD700');
-            grad.addColorStop(0.3, '#FFA500');
-            grad.addColorStop(0.7, '#FF8C00');
-            grad.addColorStop(1, '#B8860B');
+            const centerGrad = ctx.createRadialGradient(cx - 6, cy - 6, 0, cx, cy, centerR);
+            centerGrad.addColorStop(0, '#fff8b0');
+            centerGrad.addColorStop(0.25, '#ffdd00');
+            centerGrad.addColorStop(0.6, '#ff6600');
+            centerGrad.addColorStop(1, '#8b0000');
 
             ctx.beginPath();
             ctx.arc(cx, cy, centerR, 0, 2 * Math.PI);
-            ctx.fillStyle = grad;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
-            ctx.shadowBlur = 40;
+            ctx.fillStyle = centerGrad;
+            ctx.shadowColor = 'rgba(255, 140, 0, 0.9)';
+            ctx.shadowBlur = 50;
             ctx.fill();
             ctx.shadowBlur = 0;
 
+            // حلقة توهج خارجية
             ctx.beginPath();
-            ctx.arc(cx, cy, centerR + 5, 0, 2 * Math.PI);
-            ctx.strokeStyle = 'rgba(255, 215, 0, 0.2)';
-            ctx.lineWidth = 2;
+            ctx.arc(cx, cy, centerR + 6, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(255, 200, 0, 0.4)';
+            ctx.lineWidth = 3;
             ctx.stroke();
 
-            ctx.fillStyle = '#0a0a0a';
-            ctx.font = '32px sans-serif';
+            // الأيقونة المركزية
+            ctx.fillStyle = '#0a0505';
+            ctx.font = '36px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(255, 220, 100, 0.8)';
+            ctx.shadowBlur = 15;
             ctx.fillText(centerIcon, cx, cy + 1);
             ctx.shadowBlur = 0;
         }
@@ -1778,8 +2186,7 @@
                 const elapsed = time - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-                const easedProgress = easeOutCubic;
-                const currentAngle = startRotation + (targetRotation - startRotation) * easedProgress;
+                const currentAngle = startRotation + (targetRotation - startRotation) * easeOutCubic;
                 currentRotation = currentAngle;
                 drawWheel(prizesCache, -1, currentAngle);
                 if (progress < 1) {
@@ -1911,7 +2318,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        admin_id: ADMIN_ID, name: name, icon: icon || '🎁',
+                        admin_id: ADMIN_ID, name, icon: icon || '🎁',
                         description: description || '', probability: parseFloat(probability) || 10,
                         color: color || '#1a1a2e', color2: color2 || '#16213e'
                     })
@@ -2077,8 +2484,10 @@
                 const data = await res.json();
                 if (data.success && data.prizes && data.prizes.length > 0) {
                     prizesCache = data.prizes;
+                    prizesLoaded = true;
                     return data.prizes;
                 }
+                prizesCache = [];
                 return [];
             } catch (e) {
                 console.error('Error loading prizes:', e);
@@ -2217,9 +2626,6 @@
             else { screen.classList.remove('active'); wrapper.classList.add('show'); }
         }
 
-        // ================================================================
-        //                      التحقق من الاتصال
-        // ================================================================
         async function checkConnection() {
             try {
                 await connectionManager.fetchWithRetry(`${API_BASE}/api/status`);
@@ -2250,7 +2656,7 @@
 
             soundManager.init();
             soundManager.playStartSound();
-            soundManager.playSpinSound();
+            setTimeout(() => soundManager.playSpinSound(), 300);
 
             try {
                 const response = await connectionManager.fetchWithRetry(`${API_BASE}/api/wheel/spin`, {
@@ -2452,6 +2858,8 @@
                 await loadSettings();
                 updateLoading(50);
                 await new Promise(r => setTimeout(r, 300));
+
+                // ⚠️ رسم العجلة بعد تحميل الجوائز
                 const prizes = await loadPrizes();
                 drawWheel(prizes, -1, 0);
                 updateLoading(70);
