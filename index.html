@@ -3,214 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>IChancy - Epic Fire Wheel</title>
+    <title>IChancy</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        html, body {
+        html,
+        body {
             width: 100%;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #050302;
+            background: #0a0a0a;
             overflow-x: hidden;
             padding: 12px;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            position: relative;
         }
 
-        /* ============ خلفية نارية ============ */
         .bg-image-fixed {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 0;
+            opacity: 1;
             pointer-events: none;
             overflow: hidden;
         }
         .bg-image-fixed img {
-            width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             animation: slowZoom 30s ease-in-out infinite alternate;
-            filter: brightness(0.3) saturate(1.5) contrast(1.25);
         }
         @keyframes slowZoom {
             0% { transform: scale(1); }
-            100% { transform: scale(1.08); }
-        }
-
-        .fire-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse at 50% 100%, rgba(255, 80, 0, 0.4) 0%, transparent 55%),
-                radial-gradient(ellipse at 50% 100%, rgba(255, 160, 0, 0.28) 0%, transparent 40%),
-                radial-gradient(ellipse at 20% 90%, rgba(200, 40, 0, 0.22) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 90%, rgba(200, 40, 0, 0.22) 0%, transparent 50%);
-            animation: firePulse 3s ease-in-out infinite alternate;
-            mix-blend-mode: screen;
-        }
-        @keyframes firePulse {
-            0% { opacity: 0.7; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.03); }
-        }
-
-        .embers-layer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .ember {
-            position: absolute;
-            bottom: -20px;
-            width: 4px; height: 4px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #fff8b0, #ff8c00 40%, #ff2200 80%, transparent);
-            box-shadow: 0 0 12px #ff6600, 0 0 24px #ff2200;
-            animation: emberRise linear infinite;
-        }
-        @keyframes emberRise {
-            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-            10% { opacity: 1; }
-            85% { opacity: 0.9; }
-            100% { transform: translateY(-110vh) translateX(var(--drift, 40px)) scale(0.2); opacity: 0; }
+            100% { transform: scale(1.05); }
         }
 
         .user-status { display: none; }
 
-        /* ============================================================
-           العجلة - السيوف خلفها
-           ============================================================ */
+        /* ===== العجلة ===== */
         .wheel-wrapper {
             position: relative;
             width: 100%;
-            max-width: 460px;
+            max-width: 420px;
             margin: 0 auto;
             aspect-ratio: 1/1;
             display: none;
             z-index: 1;
-            padding: 28px;
         }
         .wheel-wrapper.show {
             display: block;
-            animation: fadeIn 0.6s ease;
+            animation: epicReveal 1.4s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        .swords-behind {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* ===== السيف الواقعي ===== */
-        .sword {
-            position: absolute;
-            width: 26px;
-            height: 130%;
-            top: 50%; left: 50%;
-            transform-origin: center center;
-            filter: drop-shadow(0 0 10px rgba(255, 80, 0, 0.9))
-                    drop-shadow(0 0 30px rgba(255, 40, 0, 0.5));
-        }
-        .sword-left { transform: translate(-50%, -50%) rotate(-42deg) translateY(-12%); }
-        .sword-right { transform: translate(-50%, -50%) rotate(42deg) translateY(-12%); }
-
-        .sword-grip {
-            position: absolute;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 22%;
-            background: repeating-linear-gradient(45deg,
-                #3d1f0a 0px, #3d1f0a 3px,
-                #5a2e12 3px, #5a2e12 6px,
-                #2a1405 6px, #2a1405 9px);
-            border-radius: 3px;
-            box-shadow: inset -2px 0 3px rgba(0,0,0,0.7), inset 2px 0 3px rgba(120,80,40,0.3);
-            border: 1px solid #1a0d03;
-        }
-        .sword-pommel {
-            position: absolute;
-            bottom: -12px; left: 50%;
-            transform: translateX(-50%);
-            width: 22px; height: 22px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffdd55 0%, #cc9900 30%, #8b6508 70%, #4a3200 100%);
-            box-shadow: 0 0 12px rgba(255, 200, 50, 0.9), 0 0 24px rgba(255, 100, 0, 0.6),
-                inset 0 2px 3px rgba(255, 255, 200, 0.5), inset 0 -3px 4px rgba(0,0,0,0.7);
-        }
-        .sword-guard {
-            position: absolute;
-            bottom: 21%; left: 50%;
-            transform: translateX(-50%);
-            width: 60px; height: 10px;
-            background: linear-gradient(180deg, #ffdd55 0%, #cc9900 25%, #8b6508 50%, #5a4400 75%, #3a2c00 100%);
-            border-radius: 4px;
-            box-shadow: 0 0 12px rgba(255, 200, 50, 0.9), 0 0 24px rgba(255, 100, 0, 0.5),
-                inset 0 2px 2px rgba(255, 255, 200, 0.6), inset 0 -2px 3px rgba(0,0,0,0.7);
-        }
-        .sword-guard::before, .sword-guard::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffdd55, #8b6508);
-            transform: translateY(-50%);
-            box-shadow: 0 0 8px rgba(255, 180, 50, 0.9);
-        }
-        .sword-guard::before { left: -6px; }
-        .sword-guard::after { right: -6px; }
-
-        .sword-blade {
-            position: absolute;
-            bottom: 22%; left: 50%;
-            transform: translateX(-50%);
-            width: 18px;
-            height: 78%;
-            background: linear-gradient(90deg,
-                #1a1a1a 0%, #3a3a3a 12%, #7a7a7a 28%, #c8c8c8 42%, #f0f0f0 50%,
-                #c8c8c8 58%, #7a7a7a 72%, #3a3a3a 88%, #1a1a1a 100%);
-            clip-path: polygon(50% 0%, 88% 3%, 100% 12%, 100% 100%, 0% 100%, 0% 12%, 12% 3%);
-            box-shadow: inset 0 0 6px rgba(0,0,0,0.6), 0 0 10px rgba(255, 120, 0, 0.4);
-        }
-        .sword-blade::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 4px; height: 100%;
-            background: linear-gradient(180deg, #ffffff 0%, #ffdd88 15%, #ff8800 35%, #ff4400 55%, #aa1100 75%, transparent 95%);
-            filter: blur(1.5px);
-            box-shadow: 0 0 12px #ff6600, 0 0 24px #ff3300, 0 0 40px #ff1100;
-            animation: bladeFirePulse 1.2s ease-in-out infinite alternate;
-        }
-        @keyframes bladeFirePulse {
-            0% { opacity: 0.75; filter: blur(1.5px) brightness(1); }
-            100% { opacity: 1; filter: blur(2px) brightness(1.4); }
-        }
-        .sword-blade::after {
-            content: '';
-            position: absolute;
-            top: 8%; left: 50%;
-            transform: translateX(-50%);
-            width: 2px; height: 84%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(200,200,200,0.6) 50%, rgba(150,150,150,0.4) 100%);
-            filter: blur(0.5px);
+        @keyframes epicReveal {
+            0%   { opacity: 0; transform: scale(0.6) rotate(-15deg); filter: blur(20px) brightness(2); }
+            60%  { opacity: 1; transform: scale(1.08) rotate(2deg); filter: blur(0) brightness(1.2); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0) brightness(1); }
         }
 
         .wheel-container {
@@ -218,275 +79,160 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            padding: 16px;
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* ============================================================
-           اللهب - ألسنة تخرج للخارج من الإطار
-           ============================================================ */
-        .fire-flames {
+        /* ===== إطار لهب بركاني ===== */
+        .neon-frame-gold {
             position: absolute;
-            top: -18px; left: -18px;
-            width: calc(100% + 36px);
-            height: calc(100% + 36px);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 5;
-            overflow: visible;
+            z-index: 2;
+            border: 4px solid #FF6B00;
+            background: transparent !important;
+            box-shadow: 0 0 30px rgba(255, 80, 0, 0.5), 0 0 60px rgba(255, 40, 0, 0.35), 0 0 120px rgba(255, 0, 0, 0.2);
+            animation: lavaPulse 1.8s ease-in-out infinite;
         }
 
-        .flame {
-            position: absolute;
-            width: 24px;
-            height: 48px;
-            border-radius: 50% 50% 20% 20% / 70% 70% 30% 30%;
-            background: radial-gradient(ellipse at 50% 100%,
-                #fff8b0 0%,
-                #ffdd00 18%,
-                #ff8800 38%,
-                #ff4400 58%,
-                #aa1100 78%,
-                transparent 92%);
-            transform-origin: 50% 100%;
-            filter: blur(1.5px) drop-shadow(0 0 12px rgba(255, 100, 0, 0.9));
-            animation: flameDance 1.3s ease-in-out infinite alternate;
-            opacity: 0.95;
-        }
-        .flame::before {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 55%;
-            height: 60%;
-            border-radius: 50% 50% 20% 20% / 70% 70% 30% 30%;
-            background: radial-gradient(ellipse at 50% 100%,
-                #ffffff 0%,
-                #fff8b0 25%,
-                #ffdd00 60%,
-                transparent 100%);
-            filter: blur(1px);
-            animation: flameInnerDance 0.8s ease-in-out infinite alternate;
-        }
-        @keyframes flameDance {
-            0% { transform: scaleY(1) scaleX(1) rotate(-4deg); }
-            50% { transform: scaleY(1.35) scaleX(0.85) rotate(3deg); }
-            100% { transform: scaleY(1.1) scaleX(1.05) rotate(-2deg); }
-        }
-        @keyframes flameInnerDance {
-            0% { transform: translateX(-50%) scaleY(1) scaleX(1); opacity: 0.9; }
-            100% { transform: translateX(-50%) scaleY(1.4) scaleX(0.75); opacity: 1; }
+        @keyframes lavaPulse {
+            0%, 100% {
+                border-color: #FF6B00;
+                box-shadow: 0 0 30px rgba(255,80,0,0.5), 0 0 60px rgba(255,40,0,0.35), 0 0 120px rgba(255,0,0,0.2);
+            }
+            50% {
+                border-color: #FFB300;
+                box-shadow: 0 0 55px rgba(255,140,0,0.8), 0 0 110px rgba(255,60,0,0.55), 0 0 180px rgba(255,0,0,0.35);
+            }
         }
 
-        /* إطار ناري أساسي - نظيف وصغير */
-        .fire-ring {
+        /* ===== حلقات اللهب ===== */
+        .wave-ring-gold {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 4;
-            border: 4px solid transparent;
-            background:
-                linear-gradient(#050302, #050302) padding-box,
-                conic-gradient(from 0deg,
-                    #ff2200, #ff6600, #ffcc00, #ff8800, #ff3300,
-                    #ff2200, #ff6600, #ffcc00, #ff8800, #ff3300,
-                    #ff2200) border-box;
-            box-shadow:
-                0 0 15px rgba(255, 80, 0, 0.7),
-                0 0 30px rgba(255, 40, 0, 0.4),
-                inset 0 0 20px rgba(255, 100, 0, 0.35);
-            animation: fireRingRotate 6s linear infinite;
-        }
-        @keyframes fireRingRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .fire-halo {
-            position: absolute;
-            top: -15px; left: -15px;
-            width: calc(100% + 30px);
-            height: calc(100% + 30px);
+            top: 50%;
+            left: 50%;
             border-radius: 50%;
             pointer-events: none;
             z-index: 1;
-            background: radial-gradient(circle,
-                rgba(255, 120, 0, 0.28) 0%,
-                rgba(255, 50, 0, 0.14) 40%,
-                transparent 70%);
-            filter: blur(12px);
-            animation: haloPulse 2.5s ease-in-out infinite alternate;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255, 90, 0, 0.7);
+            animation: lavaWave 3.2s ease-out infinite;
+            background: transparent !important;
         }
-        @keyframes haloPulse {
-            0% { opacity: 0.6; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.05); }
+        .wave-ring-gold:nth-child(3) { width: 78%; height: 78%; animation-delay: 0s; }
+        .wave-ring-gold:nth-child(4) { width: 85%; height: 85%; animation-delay: 1.1s; }
+        .wave-ring-gold:nth-child(5) { width: 92%; height: 92%; animation-delay: 2.2s; }
+
+        @keyframes lavaWave {
+            0%   { transform: translate(-50%,-50%) scale(0.9); opacity: 0.9; border-width: 5px; border-color: rgba(255,180,0,0.9); }
+            100% { transform: translate(-50%,-50%) scale(1.25); opacity: 0; border-width: 1px; border-color: rgba(255,40,0,0); }
         }
 
-        /* شرر متطاير */
-        .sparks-layer {
-            position: absolute;
-            top: -20px; left: -20px;
-            width: calc(100% + 40px);
-            height: calc(100% + 40px);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 6;
-            overflow: visible;
-        }
-        .spark {
-            position: absolute;
-            width: 3px; height: 3px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #fff8b0, #ff8800 40%, #ff2200 80%, transparent);
-            box-shadow: 0 0 8px #ff6600, 0 0 16px #ff2200;
-            animation: sparkFloat 2.5s ease-out infinite;
-        }
-        @keyframes sparkFloat {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-70px) translateX(var(--sx, 0)) scale(0); opacity: 0; }
-        }
-
-        /* ============================================================
-           الرمح (يشير للأسفل نحو القسم الرابح)
-           ============================================================ */
-        .pointer {
-            position: absolute;
-            top: -68px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            width: 44px;
-            height: 108px;
-            pointer-events: none;
-            filter: drop-shadow(0 0 10px rgba(255, 80, 0, 0.9))
-                    drop-shadow(0 0 25px rgba(255, 40, 0, 0.6));
-            animation: spearBounce 1.8s ease-in-out infinite;
-        }
-        @keyframes spearBounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(5px); }
-        }
-
-        .spear-shaft {
-            position: absolute;
-            top: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 50px;
-            background: linear-gradient(90deg,
-                #2a1a0a 0%, #5a3a1a 25%, #8a5a2a 50%, #5a3a1a 75%, #2a1a0a 100%);
-            border-radius: 2px;
-            box-shadow: inset -1px 0 2px rgba(0,0,0,0.7), inset 1px 0 2px rgba(120,80,40,0.4);
-        }
-        .spear-feather {
-            position: absolute;
-            top: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 38px;
-            height: 18px;
-            background: linear-gradient(180deg, #ff4400 0%, #cc2200 50%, #8b0000 100%);
-            clip-path: polygon(0% 0%, 15% 40%, 15% 100%, 85% 100%, 85% 40%, 100% 0%, 50% 20%);
-            filter: drop-shadow(0 0 6px rgba(255, 60, 0, 0.8));
-        }
-        .spear-feather::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(90deg,
-                transparent 0px, transparent 3px,
-                rgba(0,0,0,0.3) 3px, rgba(0,0,0,0.3) 4px);
-        }
-        .spear-collar {
-            position: absolute;
-            top: 48px; left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 8px;
-            background: linear-gradient(180deg, #ffdd55, #8b6508, #3a2c00);
-            border-radius: 2px;
-            box-shadow: 0 0 8px rgba(255, 180, 50, 0.9);
-        }
-        .spear-tip {
-            position: absolute;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 42px;
-            background: linear-gradient(90deg,
-                #1a1a1a 0%, #4a4a4a 20%, #b0b0b0 45%, #f0f0f0 50%,
-                #b0b0b0 55%, #4a4a4a 80%, #1a1a1a 100%);
-            clip-path: polygon(0% 0%, 100% 0%, 100% 30%, 50% 100%, 0% 30%);
-            box-shadow: inset 0 0 6px rgba(0,0,0,0.5), 0 0 12px rgba(255, 120, 0, 0.7);
-        }
-        .spear-tip::before {
-            content: '';
-            position: absolute;
-            top: 20%; left: 50%;
-            transform: translateX(-50%);
-            width: 2px; height: 70%;
-            background: linear-gradient(180deg, #ff4400, #ffaa00, #fff);
-            filter: blur(0.8px);
-            box-shadow: 0 0 8px #ff6600, 0 0 16px #ff2200;
-        }
-
-        /* ============================================================
-           الشرر المتوهج حول العجلة
-           ============================================================ */
+        /* ===== فقاعات الحمم ===== */
         .glow-bubbles-container {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 3;
+            z-index: 1;
             overflow: visible;
             border-radius: 50%;
         }
         .glow-bubble {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 200, 100, 0.9), rgba(255, 80, 0, 0.4) 50%, transparent 80%);
-            box-shadow: 0 0 15px rgba(255, 120, 0, 0.8), 0 0 30px rgba(255, 40, 0, 0.5);
+            background: radial-gradient(circle at 30% 30%, rgba(255,120,0,0.55), rgba(255,40,0,0.05));
+            box-shadow: 0 0 25px rgba(255,100,0,0.4), inset 0 0 15px rgba(255,60,0,0.25);
             pointer-events: none;
-            animation: floatFire 8s infinite alternate ease-in-out;
-            opacity: 0.85;
+            animation: floatBubble 12s infinite alternate ease-in-out;
+            opacity: 0.75;
         }
-        @keyframes floatFire {
+        .glow-bubble::after {
+            content: '';
+            position: absolute;
+            top: 15%; left: 20%;
+            width: 30%; height: 30%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,240,150,0.8), transparent);
+            opacity: 0.5;
+        }
+
+        @keyframes floatBubble {
             0% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(15px, -25px) scale(1.2); }
-            50% { transform: translate(-10px, 20px) scale(0.8); }
-            75% { transform: translate(20px, 15px) scale(1.1); }
-            100% { transform: translate(-15px, -20px) scale(0.9); }
+            25% { transform: translate(15px, -20px) scale(1.1); }
+            50% { transform: translate(-10px, 25px) scale(0.9); }
+            75% { transform: translate(20px, 10px) scale(1.05); }
+            100% { transform: translate(-15px, -15px) scale(0.95); }
         }
-        .glow-bubble:nth-child(1) { width: 10px; height: 10px; top: 10%; left: 12%; animation-duration: 6s; }
-        .glow-bubble:nth-child(2) { width: 14px; height: 14px; top: 6%; right: 18%; animation-duration: 7s; animation-delay: 1s; }
-        .glow-bubble:nth-child(3) { width: 8px; height: 8px; bottom: 18%; left: 8%; animation-duration: 5s; animation-delay: 2s; }
-        .glow-bubble:nth-child(4) { width: 12px; height: 12px; bottom: 12%; right: 10%; animation-duration: 6.5s; animation-delay: 0.5s; }
-        .glow-bubble:nth-child(5) { width: 9px; height: 9px; top: 48%; left: 3%; animation-duration: 7.5s; animation-delay: 3s; }
-        .glow-bubble:nth-child(6) { width: 11px; height: 11px; top: 44%; right: 4%; animation-duration: 6s; animation-delay: 1.5s; }
-        .glow-bubble:nth-child(7) { width: 7px; height: 7px; top: 72%; left: 22%; animation-duration: 5.5s; animation-delay: 0.3s; }
-        .glow-bubble:nth-child(8) { width: 13px; height: 13px; top: 68%; right: 20%; animation-duration: 7s; animation-delay: 2.5s; }
+
+        .glow-bubble:nth-child(1) { width: 18px; height: 18px; top: 12%; left: 10%; animation-duration: 14s; }
+        .glow-bubble:nth-child(2) { width: 28px; height: 28px; top: 8%; right: 15%; animation-duration: 16s; animation-delay: 1.2s; }
+        .glow-bubble:nth-child(3) { width: 14px; height: 14px; bottom: 20%; left: 8%; animation-duration: 11s; animation-delay: 2.5s; }
+        .glow-bubble:nth-child(4) { width: 22px; height: 22px; bottom: 15%; right: 12%; animation-duration: 13s; animation-delay: 0.7s; }
+        .glow-bubble:nth-child(5) { width: 16px; height: 16px; top: 45%; left: 4%; animation-duration: 15s; animation-delay: 3s; }
+        .glow-bubble:nth-child(6) { width: 20px; height: 20px; top: 40%; right: 5%; animation-duration: 12s; animation-delay: 1.8s; }
+        .glow-bubble:nth-child(7) { width: 12px; height: 12px; top: 70%; left: 20%; animation-duration: 14.5s; animation-delay: 0.4s; }
+        .glow-bubble:nth-child(8) { width: 24px; height: 24px; top: 68%; right: 22%; animation-duration: 13.5s; animation-delay: 2.2s; }
+
+        /* شرارات الحمم */
+        .lava-sparks {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            overflow: visible;
+        }
+        .lava-spark {
+            position: absolute;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #FFD700 0%, #FF6B00 60%, transparent 100%);
+            pointer-events: none;
+            animation: sparkRise 4s linear infinite;
+            box-shadow: 0 0 12px #FF8C00;
+        }
+        @keyframes sparkRise {
+            0%   { transform: translateY(0) scale(0.4); opacity: 0; }
+            20%  { opacity: 1; }
+            100% { transform: translateY(-140px) scale(1.2); opacity: 0; }
+        }
 
         .wheel-wrapper canvas {
             width: 100% !important;
             height: 100% !important;
             border-radius: 50%;
-            box-shadow:
-                inset 0 0 80px rgba(0, 0, 0, 0.85),
-                inset 0 0 40px rgba(255, 60, 0, 0.3),
-                0 0 25px rgba(255, 80, 0, 0.4);
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
             border: none;
             transition: filter 0.4s ease;
             display: block;
             position: relative;
             z-index: 3;
-            background: #0a0300;
         }
         .wheel-wrapper canvas.spinning {
-            filter: brightness(1.15) contrast(1.1) drop-shadow(0 0 30px rgba(255, 80, 0, 0.6));
+            filter: brightness(1.15) drop-shadow(0 0 50px rgba(255, 100, 0, 0.25));
+        }
+
+        .pointer {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            font-size: 32px;
+            filter: drop-shadow(0 0 16px rgba(255,80,0,0.9));
+            animation: pointerLava 1.4s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes pointerLava {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+            50%      { transform: translateX(-50%) translateY(-7px) scale(1.15); }
         }
 
         @keyframes fadeIn {
@@ -498,13 +244,11 @@
             display: none;
             text-align: center;
             padding: 30px 16px;
-            color: #ff8866;
+            color: #555;
             font-size: 15px;
-            background: rgba(20, 5, 0, 0.9);
+            background: rgba(18, 18, 18, 0.85);
             border-radius: 16px;
             backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 80, 0, 0.2);
-            box-shadow: 0 0 30px rgba(255, 60, 0, 0.2);
             max-width: 420px;
             margin: 0 auto;
             z-index: 1;
@@ -527,53 +271,37 @@
             border: none;
             border-radius: 16px;
             font-size: 18px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
             position: relative;
-            letter-spacing: 0.5px;
         }
         .btn-spin {
-            background: linear-gradient(135deg,
-                #8b0000 0%, #ff2200 25%, #ff6600 50%, #ffaa00 75%, #ff6600 100%);
+            background: linear-gradient(135deg, #8B0000, #FF6B00, #FFB300);
             background-size: 200% 200%;
             color: #fff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255, 200, 100, 0.6);
-            box-shadow:
-                0 0 20px rgba(255, 80, 0, 0.6),
-                0 0 40px rgba(255, 40, 0, 0.3),
-                inset 0 0 20px rgba(255, 200, 100, 0.2),
-                inset 0 -3px 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 30px rgba(255, 80, 0, 0.3);
             font-size: 19px;
-            animation: fireBtnPulse 2s ease-in-out infinite;
-            border: 1px solid rgba(255, 180, 0, 0.5);
+            animation: btnLava 3s ease infinite;
         }
-        @keyframes fireBtnPulse {
-            0%, 100% {
-                background-position: 0% 50%;
-                box-shadow: 0 0 20px rgba(255, 80, 0, 0.6),
-                            0 0 40px rgba(255, 40, 0, 0.3),
-                            inset 0 0 20px rgba(255, 200, 100, 0.2);
-            }
-            50% {
-                background-position: 100% 50%;
-                box-shadow: 0 0 30px rgba(255, 120, 0, 0.9),
-                            0 0 60px rgba(255, 40, 0, 0.5),
-                            inset 0 0 25px rgba(255, 200, 100, 0.3);
-            }
+        @keyframes btnLava {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
-        .btn-spin:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); filter: brightness(1.15); }
+        .btn-spin:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 50px rgba(255, 100, 0, 0.5);
+        }
         .btn-spin:disabled {
-            opacity: 0.4;
+            opacity: 0.35;
             cursor: not-allowed;
             transform: none;
-            animation: none;
-            filter: grayscale(0.6);
         }
         .btn-spin .spinner-small {
             display: none;
-            width: 20px; height: 20px;
+            width: 20px;
+            height: 20px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-top: 2px solid #fff;
             border-radius: 50%;
@@ -588,8 +316,8 @@
         }
 
         .deposit-notice {
-            background: rgba(20, 5, 0, 0.9);
-            border: 1px solid rgba(255, 80, 0, 0.3);
+            background: rgba(18, 18, 18, 0.85);
+            border: 1px solid rgba(255, 100, 0, 0.15);
             border-radius: 12px;
             padding: 10px 14px;
             margin-top: 10px;
@@ -598,22 +326,21 @@
             width: 100%;
             max-width: 380px;
             backdrop-filter: blur(6px);
-            box-shadow: 0 0 20px rgba(255, 60, 0, 0.2);
             margin-left: auto;
             margin-right: auto;
             z-index: 1;
             position: relative;
         }
         .deposit-notice.show { display: block; }
-        .deposit-notice .notice-text { color: #ffaa44; font-size: 14px; }
-        .deposit-notice .notice-text .amount { color: #ffdd44; font-weight: 800; text-shadow: 0 0 10px rgba(255, 200, 0, 0.8); }
-        .deposit-notice .notice-status { font-size: 13px; margin-top: 4px; color: #888; }
-        .deposit-notice .notice-status .met { color: #00ff88; text-shadow: 0 0 8px rgba(0, 255, 100, 0.6); }
-        .deposit-notice .notice-status .not-met { color: #ff4444; text-shadow: 0 0 8px rgba(255, 60, 60, 0.6); }
+        .deposit-notice .notice-text { color: #FF8C00; font-size: 14px; }
+        .deposit-notice .notice-text .amount { color: #FFB300; font-weight: 700; }
+        .deposit-notice .notice-status { font-size: 13px; margin-top: 4px; color: #666; }
+        .deposit-notice .notice-status .met { color: #00FF88; }
+        .deposit-notice .notice-status .not-met { color: #FF4444; }
 
         .result-box {
-            background: rgba(20, 5, 0, 0.92);
-            border: 1px solid rgba(255, 80, 0, 0.3);
+            background: rgba(18, 18, 18, 0.9);
+            border: 1px solid rgba(255, 100, 0, 0.15);
             border-radius: 18px;
             padding: 18px 14px;
             margin-top: 14px;
@@ -624,7 +351,6 @@
             width: 100%;
             max-width: 380px;
             backdrop-filter: blur(6px);
-            box-shadow: 0 0 30px rgba(255, 60, 0, 0.3);
             margin-left: auto;
             margin-right: auto;
             z-index: 1;
@@ -638,13 +364,13 @@
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
         .result-box.winner {
-            border-color: rgba(255, 140, 0, 0.6);
-            background: radial-gradient(circle at 50% 50%, rgba(255, 80, 0, 0.25) 0%, rgba(80, 10, 0, 0.9) 100%);
-            animation: winFireGlow 1.2s ease-in-out infinite alternate;
+            border-color: rgba(255, 140, 0, 0.4);
+            background: rgba(255, 80, 0, 0.1);
+            animation: winGlow 1.5s ease-in-out infinite alternate;
         }
-        @keyframes winFireGlow {
-            0% { box-shadow: 0 0 30px rgba(255, 60, 0, 0.4), inset 0 0 20px rgba(255, 100, 0, 0.2); }
-            100% { box-shadow: 0 0 80px rgba(255, 120, 0, 0.9), 0 0 120px rgba(255, 40, 0, 0.5), inset 0 0 40px rgba(255, 140, 0, 0.4); }
+        @keyframes winGlow {
+            0% { box-shadow: 0 0 20px rgba(255, 80, 0, 0.15); }
+            100% { box-shadow: 0 0 80px rgba(255, 120, 0, 0.35); }
         }
         .result-box .confetti-container {
             position: absolute;
@@ -663,38 +389,34 @@
             0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
             100% { opacity: 0; transform: translateY(220px) rotate(720deg) scale(0); }
         }
-
         .result-box .prize-icon { display: none; }
         .result-box .prize-name { display: none; }
         .result-box .prize-desc {
-            color: #ffaa44;
+            color: #FFB300;
             font-size: 24px;
-            font-weight: 800;
+            font-weight: 700;
             margin-top: 4px;
             padding: 6px 0;
-            text-shadow: 0 0 15px rgba(255, 120, 0, 0.8);
         }
         .result-box.winner .prize-desc {
-            background: linear-gradient(135deg, #ffdd00, #ff6600, #ff2200, #ff6600, #ffdd00);
-            background-size: 300% 300%;
+            background: linear-gradient(135deg, #FFD700, #FF4500, #FFD700);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fireTextShine 1.5s ease-in-out infinite;
+            animation: goldShine 1.5s ease-in-out infinite;
             font-size: 28px;
-            filter: drop-shadow(0 0 15px rgba(255, 100, 0, 0.9));
         }
-        @keyframes fireTextShine {
+        @keyframes goldShine {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
 
         .error-msg {
-            background: rgba(20, 5, 0, 0.92);
-            border: 1px solid rgba(255, 0, 0, 0.3);
+            background: rgba(18, 18, 18, 0.85);
+            border: 1px solid rgba(255, 0, 0, 0.06);
             border-radius: 12px;
             padding: 10px;
-            color: #ff6666;
+            color: #FF6B6B;
             text-align: center;
             font-size: 14px;
             margin-top: 10px;
@@ -702,16 +424,12 @@
             width: 100%;
             max-width: 380px;
             backdrop-filter: blur(6px);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
             margin-left: auto;
             margin-right: auto;
             z-index: 1;
             position: relative;
         }
-        .error-msg.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
+        .error-msg.show { display: block; animation: fadeIn 0.3s ease; }
 
         .loading-screen {
             display: none;
@@ -719,31 +437,28 @@
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             z-index: 9999;
-            background: radial-gradient(circle at 50% 100%, #3a0a00 0%, #0a0200 60%, #000 100%);
+            background: #0a0a0a;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
             margin: 0;
         }
-        .loading-screen.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
+        .loading-screen.active { display: flex; animation: fadeIn 0.3s ease; }
         .loading-screen .loading-image {
             width: 70vw;
             max-width: 280px;
             aspect-ratio: 1/1;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid rgba(255, 100, 0, 0.4);
-            box-shadow: 0 0 50px rgba(255, 80, 0, 0.5), 0 0 100px rgba(255, 40, 0, 0.3), inset 0 0 30px rgba(255, 100, 0, 0.3);
+            border: 2px solid rgba(255, 100, 0, 0.2);
+            box-shadow: 0 0 80px rgba(255, 80, 0, 0.15);
             animation: loadingPulse 2s ease-in-out infinite;
             margin-bottom: 28px;
         }
         @keyframes loadingPulse {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.03); opacity: 0.9; }
+            50% { transform: scale(1.02); opacity: 0.85; }
         }
         .loading-screen .progress-container {
             width: 60%;
@@ -752,34 +467,141 @@
         }
         .loading-screen .progress-bar-bg {
             width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
             overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
         }
         .loading-screen .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #ff2200, #ff6600, #ffcc00, #ff6600);
-            background-size: 200% 100%;
-            border-radius: 6px;
+            background: linear-gradient(90deg, #FF4500, #FFB300);
+            border-radius: 4px;
             transition: width 0.3s ease;
-            box-shadow: 0 0 15px rgba(255, 100, 0, 0.9);
-            animation: progressShine 1.5s linear infinite;
-        }
-        @keyframes progressShine {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
         }
         .loading-screen .progress-text {
-            color: #ffaa44;
+            color: #888;
             font-size: 14px;
             margin-top: 12px;
             text-align: center;
-            font-weight: 700;
+            font-weight: 600;
             letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(255, 100, 0, 0.8);
+        }
+
+        /* ===== مشهد القلعة العملاقة ===== */
+        .castle-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1200px;
+        }
+        .castle-scene.active { display: flex; }
+
+        .castle-layer {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform-origin: center;
+            will-change: transform, opacity;
+        }
+
+        .castle-far {
+            background: radial-gradient(ellipse at 50% 100%, #2a0a05 0%, #0a0000 55%, #000 100%);
+            animation: castleZoom 8s ease-in forwards;
+        }
+        .castle-far::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60vw;
+            height: 55vh;
+            background:
+                linear-gradient(180deg, transparent 0%, transparent 30%, #0a0200 30%, #1a0600 70%, #0a0200 100%);
+            clip-path: polygon(
+                0% 100%, 0% 55%, 5% 55%, 5% 45%, 10% 45%, 10% 55%,
+                15% 55%, 15% 40%, 22% 40%, 22% 55%,
+                28% 55%, 28% 25%, 34% 25%, 34% 55%,
+                40% 55%, 40% 15%, 60% 15%, 60% 55%,
+                66% 55%, 66% 25%, 72% 25%, 72% 55%,
+                78% 55%, 78% 40%, 85% 40%, 85% 55%,
+                90% 55%, 90% 45%, 95% 45%, 95% 55%,
+                100% 55%, 100% 100%
+            );
+            filter: drop-shadow(0 0 40px rgba(255, 80, 0, 0.5));
+            box-shadow: inset 0 -30px 80px rgba(255, 60, 0, 0.3);
+        }
+        .castle-far::after {
+            content: '';
+            position: absolute;
+            bottom: 20vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8vw;
+            height: 4vh;
+            background: radial-gradient(ellipse, rgba(255, 100, 0, 0.8), rgba(255, 40, 0, 0.2), transparent);
+            filter: blur(8px);
+            animation: castleGlow 2s ease-in-out infinite alternate;
+        }
+        @keyframes castleGlow {
+            from { opacity: 0.4; transform: translateX(-50%) scale(1); }
+            to { opacity: 1; transform: translateX(-50%) scale(1.3); }
+        }
+
+        @keyframes castleZoom {
+            0%   { transform: scale(1); opacity: 1; filter: blur(0); }
+            60%  { transform: scale(1.8); opacity: 1; filter: blur(0); }
+            100% { transform: scale(4); opacity: 0; filter: blur(8px); }
+        }
+
+        .castle-door {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.2);
+            width: 18vw;
+            height: 28vh;
+            background: radial-gradient(ellipse at 50% 100%, #000 30%, #0a0000 100%);
+            border-radius: 50% 50% 0 0;
+            box-shadow: 0 0 80px 20px rgba(0,0,0,0.9), inset 0 0 40px #000;
+            animation: doorGrow 8s ease-in forwards;
+            opacity: 0;
+        }
+        @keyframes doorGrow {
+            0%, 60% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+            72%     { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100%    { transform: translate(-50%, -50%) scale(4); opacity: 1; background: #000; }
+        }
+        .castle-door::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 70%, rgba(255, 80, 0, 0.8), transparent 60%);
+            border-radius: inherit;
+            animation: fireFlicker 0.4s infinite alternate;
+        }
+        @keyframes fireFlicker {
+            from { opacity: 0.4; }
+            to   { opacity: 0.95; }
+        }
+
+        .castle-flash {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            animation: flashIn 0.6s ease 7.6s forwards;
+        }
+        @keyframes flashIn {
+            to { opacity: 1; }
         }
 
         .sound-settings {
@@ -788,20 +610,19 @@
             gap: 20px;
             margin-top: 10px;
             padding: 6px 16px;
-            background: rgba(20, 5, 0, 0.9);
+            background: rgba(18, 18, 18, 0.85);
             border-radius: 12px;
-            border: 1px solid rgba(255, 80, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             width: 100%;
             max-width: 380px;
             backdrop-filter: blur(6px);
-            box-shadow: 0 0 15px rgba(255, 60, 0, 0.15);
             margin-left: auto;
             margin-right: auto;
             z-index: 1;
             position: relative;
         }
         .sound-settings label {
-            color: #ffaa66;
+            color: #666;
             font-size: 12px;
             display: flex;
             align-items: center;
@@ -809,59 +630,50 @@
             cursor: pointer;
         }
         .sound-settings input[type="checkbox"] {
-            accent-color: #ff6600;
-            width: 16px; height: 16px;
+            accent-color: #FF6B00;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
         }
-        .sound-settings .sound-indicator {
-            color: #ff8800;
-            font-size: 14px;
-            filter: drop-shadow(0 0 6px rgba(255, 100, 0, 0.8));
-        }
+        .sound-settings .sound-indicator { color: #FF8C00; font-size: 14px; }
 
+        /* ===== لوحة الإدارة ===== */
         .admin-panel {
             display: none;
-            background: rgba(20, 5, 0, 0.92);
-            border: 1px solid rgba(255, 80, 0, 0.25);
+            background: rgba(18, 18, 18, 0.85);
+            border: 1px solid rgba(255, 100, 0, 0.15);
             border-radius: 20px;
             padding: 16px;
             margin-top: 14px;
             width: 100%;
             max-width: 420px;
             backdrop-filter: blur(6px);
-            box-shadow: 0 0 30px rgba(255, 60, 0, 0.2);
             margin-left: auto;
             margin-right: auto;
             z-index: 1;
             position: relative;
         }
-        .admin-panel.show {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
+        .admin-panel.show { display: block; animation: fadeIn 0.4s ease; }
         .admin-panel .panel-title {
-            color: #ff8800;
+            color: #FF8C00;
             font-size: 16px;
-            font-weight: 800;
+            font-weight: 700;
             margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
-            text-shadow: 0 0 10px rgba(255, 100, 0, 0.8);
         }
         .admin-panel .panel-title .badge {
-            background: linear-gradient(135deg, #ff2200, #ff8800);
-            color: #fff;
+            background: #FF6B00;
+            color: #0a0a0a;
             font-size: 9px;
             padding: 2px 12px;
             border-radius: 20px;
-            font-weight: 800;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-            box-shadow: 0 0 10px rgba(255, 100, 0, 0.6);
+            font-weight: 700;
         }
         .admin-panel .prize-item {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 80, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 10px;
             padding: 8px 10px;
             margin-bottom: 6px;
@@ -874,12 +686,11 @@
             font-size: 22px;
             width: 34px;
             text-align: center;
-            filter: drop-shadow(0 0 6px rgba(255, 100, 0, 0.6));
         }
         .admin-panel .prize-item .prize-info { flex: 1; min-width: 90px; }
         .admin-panel .prize-item .prize-info .name-input {
             background: transparent;
-            border: 1px solid rgba(255, 80, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 4px;
             color: #fff;
             font-size: 12px;
@@ -890,14 +701,13 @@
         }
         .admin-panel .prize-item .prize-info .name-input:focus {
             outline: none;
-            border-color: #ff6600;
-            box-shadow: 0 0 10px rgba(255, 100, 0, 0.4);
+            border-color: #FF6B00;
         }
         .admin-panel .prize-item .prize-info .desc-input {
             background: transparent;
-            border: 1px solid rgba(255, 80, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 4px;
-            color: #888;
+            color: #666;
             font-size: 10px;
             padding: 2px 6px;
             width: 100%;
@@ -905,60 +715,54 @@
         }
         .admin-panel .prize-item .prize-info .desc-input:focus {
             outline: none;
-            border-color: rgba(255, 100, 0, 0.5);
+            border-color: rgba(255, 100, 0, 0.3);
         }
-        .admin-panel .prize-item .prize-prob {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
+        .admin-panel .prize-item .prize-prob { display: flex; align-items: center; gap: 3px; }
         .admin-panel .prize-item .prize-prob .prob-input {
             width: 44px;
             padding: 3px 4px;
             border-radius: 4px;
-            border: 1px solid rgba(255, 80, 0, 0.25);
-            background: rgba(0, 0, 0, 0.4);
-            color: #ff8800;
+            border: 1px solid rgba(255, 100, 0, 0.15);
+            background: rgba(0, 0, 0, 0.3);
+            color: #FF8C00;
             font-size: 11px;
             text-align: center;
         }
         .admin-panel .prize-item .prize-prob .prob-input:focus {
             outline: none;
-            border-color: #ff6600;
-            box-shadow: 0 0 8px rgba(255, 100, 0, 0.5);
+            border-color: #FF6B00;
         }
-        .admin-panel .prize-item .prize-prob .prob-label { color: #777; font-size: 9px; }
+        .admin-panel .prize-item .prize-prob .prob-label { color: #555; font-size: 9px; }
         .admin-panel .prize-item .prize-prob .btn-save-prob {
             padding: 2px 8px;
-            background: rgba(255, 100, 0, 0.15);
-            border: 1px solid rgba(255, 100, 0, 0.3);
+            background: rgba(255, 100, 0, 0.1);
+            border: 1px solid rgba(255, 100, 0, 0.15);
             border-radius: 4px;
-            color: #ff8800;
+            color: #FF8C00;
             font-size: 9px;
             cursor: pointer;
             transition: all 0.3s;
         }
         .admin-panel .prize-item .prize-prob .btn-save-prob:hover {
-            background: rgba(255, 100, 0, 0.3);
-            box-shadow: 0 0 10px rgba(255, 100, 0, 0.5);
+            background: rgba(255, 100, 0, 0.2);
         }
         .admin-panel .prize-item .prize-colors { display: flex; gap: 3px; }
         .admin-panel .prize-item .prize-colors input[type="color"] {
-            width: 26px; height: 26px;
-            border: 1px solid rgba(255, 80, 0, 0.3);
+            width: 26px;
+            height: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 4px;
             padding: 2px;
             background: transparent;
             cursor: pointer;
         }
         .admin-panel .prize-item .prize-colors input[type="color"]:hover {
-            border-color: #ff6600;
-            box-shadow: 0 0 8px rgba(255, 100, 0, 0.5);
+            border-color: #FF6B00;
         }
         .admin-panel .prize-item .btn-delete {
-            background: rgba(255, 0, 0, 0.15);
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            color: #ff4444;
+            background: rgba(255, 0, 0, 0.08);
+            border: none;
+            color: #FF4444;
             padding: 2px 10px;
             border-radius: 4px;
             cursor: pointer;
@@ -966,9 +770,8 @@
             transition: all 0.3s;
         }
         .admin-panel .prize-item .btn-delete:hover {
-            background: rgba(255, 0, 0, 0.3);
+            background: rgba(255, 0, 0, 0.2);
             transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
         }
         .admin-panel .add-prize-form {
             display: flex;
@@ -981,35 +784,29 @@
             flex: 1;
             padding: 6px 10px;
             border-radius: 6px;
-            border: 1px solid rgba(255, 80, 0, 0.25);
-            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 100, 0, 0.15);
+            background: rgba(0, 0, 0, 0.3);
             color: #fff;
             font-size: 11px;
             min-width: 50px;
         }
         .admin-panel .add-prize-form input:focus {
             outline: none;
-            border-color: #ff6600;
-            box-shadow: 0 0 10px rgba(255, 100, 0, 0.4);
+            border-color: #FF6B00;
         }
-        .admin-panel .add-prize-form input::placeholder { color: #666; }
+        .admin-panel .add-prize-form input::placeholder { color: #555; }
         .admin-panel .add-prize-form .btn-add {
             padding: 6px 16px;
-            background: linear-gradient(135deg, #8b0000, #ff4400);
+            background: linear-gradient(135deg, #8B0000, #FF6B00);
             border: none;
             border-radius: 6px;
             color: #fff;
-            font-weight: 800;
+            font-weight: 700;
             font-size: 13px;
             cursor: pointer;
             transition: all 0.3s;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-            box-shadow: 0 0 10px rgba(255, 80, 0, 0.5);
         }
-        .admin-panel .add-prize-form .btn-add:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 120, 0, 0.8);
-        }
+        .admin-panel .add-prize-form .btn-add:hover { transform: scale(1.05); }
         .admin-panel .add-prize-form .btn-add:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -1023,31 +820,30 @@
         }
         .admin-panel .panel-actions .btn-action {
             padding: 5px 14px;
-            border: 1px solid rgba(255, 80, 0, 0.25);
+            border: 1px solid rgba(255, 100, 0, 0.15);
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.02);
-            color: #ff8800;
+            color: #FF8C00;
             font-size: 10px;
             cursor: pointer;
             transition: all 0.3s;
         }
         .admin-panel .panel-actions .btn-action:hover {
-            background: rgba(255, 100, 0, 0.1);
-            border-color: #ff6600;
-            box-shadow: 0 0 10px rgba(255, 100, 0, 0.4);
+            background: rgba(255, 100, 0, 0.05);
+            border-color: #FF6B00;
         }
         .admin-panel .panel-actions .btn-action.danger {
-            color: #ff4444;
-            border-color: rgba(255, 0, 0, 0.25);
+            color: #FF4444;
+            border-color: rgba(255, 0, 0, 0.1);
         }
         .admin-panel .panel-actions .btn-action.danger:hover {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #ff4444;
+            background: rgba(255, 0, 0, 0.05);
+            border-color: #FF4444;
         }
         .admin-panel .settings-section {
             margin-top: 12px;
             padding-top: 12px;
-            border-top: 1px solid rgba(255, 80, 0, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
         .admin-panel .settings-section .setting-row {
             display: flex;
@@ -1057,7 +853,7 @@
             flex-wrap: wrap;
         }
         .admin-panel .settings-section .setting-row label {
-            color: #aa8866;
+            color: #888;
             font-size: 11px;
             min-width: 70px;
         }
@@ -1066,8 +862,8 @@
             flex: 1;
             padding: 4px 8px;
             border-radius: 4px;
-            border: 1px solid rgba(255, 80, 0, 0.25);
-            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 100, 0, 0.15);
+            background: rgba(0, 0, 0, 0.3);
             color: #fff;
             font-size: 11px;
             min-width: 60px;
@@ -1075,28 +871,26 @@
         .admin-panel .settings-section .setting-row input:focus,
         .admin-panel .settings-section .setting-row textarea:focus {
             outline: none;
-            border-color: #ff6600;
-            box-shadow: 0 0 10px rgba(255, 100, 0, 0.4);
+            border-color: #FF6B00;
         }
         .admin-panel .settings-section .setting-row .btn-save {
             padding: 4px 14px;
-            background: rgba(255, 100, 0, 0.15);
-            border: 1px solid rgba(255, 100, 0, 0.3);
+            background: rgba(255, 100, 0, 0.1);
+            border: 1px solid rgba(255, 100, 0, 0.2);
             border-radius: 4px;
-            color: #ff8800;
+            color: #FF8C00;
             font-size: 10px;
             cursor: pointer;
             transition: all 0.3s;
             white-space: nowrap;
         }
         .admin-panel .settings-section .setting-row .btn-save:hover {
-            background: rgba(255, 100, 0, 0.3);
-            box-shadow: 0 0 10px rgba(255, 100, 0, 0.5);
+            background: rgba(255, 100, 0, 0.2);
         }
         .admin-panel .settings-section .setting-row .btn-save.saved {
-            background: rgba(0, 255, 100, 0.15);
-            border-color: rgba(0, 255, 100, 0.3);
-            color: #00ff88;
+            background: rgba(0, 255, 100, 0.1);
+            border-color: rgba(0, 255, 100, 0.2);
+            color: #00FF88;
         }
         .admin-panel .settings-section .toggle-row {
             display: flex;
@@ -1105,90 +899,76 @@
             margin-bottom: 8px;
         }
         .admin-panel .settings-section .toggle-row label {
-            color: #aa8866;
+            color: #888;
             font-size: 11px;
             min-width: 70px;
         }
         .admin-panel .settings-section .toggle-row input[type="checkbox"] {
-            accent-color: #ff6600;
-            width: 16px; height: 16px;
+            accent-color: #FF6B00;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
         }
         .admin-panel .settings-section .toggle-row .btn-save {
             padding: 4px 14px;
-            background: rgba(255, 100, 0, 0.15);
-            border: 1px solid rgba(255, 100, 0, 0.3);
+            background: rgba(255, 100, 0, 0.1);
+            border: 1px solid rgba(255, 100, 0, 0.2);
             border-radius: 4px;
-            color: #ff8800;
+            color: #FF8C00;
             font-size: 10px;
             cursor: pointer;
             transition: all 0.3s;
         }
         .admin-panel .settings-section .toggle-row .btn-save:hover {
-            background: rgba(255, 100, 0, 0.3);
+            background: rgba(255, 100, 0, 0.2);
         }
         .admin-panel .settings-section .toggle-row .btn-save.saved {
-            background: rgba(0, 255, 100, 0.15);
-            border-color: rgba(0, 255, 100, 0.3);
-            color: #00ff88;
+            background: rgba(0, 255, 100, 0.1);
+            border-color: rgba(0, 255, 100, 0.2);
+            color: #00FF88;
         }
 
         .error-container {
             display: none;
             text-align: center;
             padding: 30px 16px;
-            background: rgba(20, 5, 0, 0.92);
-            border: 1px solid rgba(255, 80, 0, 0.25);
+            background: rgba(18, 18, 18, 0.85);
             border-radius: 20px;
             backdrop-filter: blur(6px);
-            box-shadow: 0 0 40px rgba(255, 60, 0, 0.3);
             max-width: 420px;
             margin: 0 auto;
             z-index: 1;
             position: relative;
         }
-        .error-container.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        .error-container .error-icon {
-            font-size: 44px;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 15px rgba(255, 100, 0, 0.8));
-        }
+        .error-container.show { display: block; animation: fadeIn 0.5s ease; }
+        .error-container .error-icon { font-size: 44px; margin-bottom: 10px; }
         .error-container .error-title {
-            color: #ff8800;
+            color: #FF8C00;
             font-size: 20px;
-            font-weight: 800;
+            font-weight: 700;
             margin-bottom: 6px;
-            text-shadow: 0 0 15px rgba(255, 100, 0, 0.8);
         }
         .error-container .error-text {
-            color: #aa8866;
+            color: #777;
             font-size: 14px;
             line-height: 1.6;
         }
-        .error-container .error-text .highlight {
-            color: #ffaa44;
-            font-weight: 700;
-        }
+        .error-container .error-text .highlight { color: #FF8C00; }
         .error-container .btn-open-bot {
             margin-top: 16px;
             padding: 12px 32px;
-            background: linear-gradient(135deg, #8b0000, #ff4400);
+            background: linear-gradient(135deg, #8B0000, #FF6B00);
             border: none;
             border-radius: 14px;
             color: #fff;
             font-size: 15px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(255, 80, 0, 0.6);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
         }
         .error-container .btn-open-bot:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(255, 120, 0, 0.9);
+            box-shadow: 0 0 40px rgba(255, 100, 0, 0.35);
         }
 
         .notification-bar {
@@ -1197,26 +977,19 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #8b0000, #ff2200, #ff6600);
-            background-size: 200% 200%;
+            background: linear-gradient(135deg, #FF4500, #FFB300);
             color: #fff;
             padding: 14px 28px;
             border-radius: 16px;
             font-size: 17px;
-            font-weight: 800;
+            font-weight: 700;
             z-index: 1000;
-            box-shadow: 0 0 30px rgba(255, 80, 0, 0.7), 0 0 60px rgba(255, 40, 0, 0.4);
+            box-shadow: 0 10px 60px rgba(255, 100, 0, 0.4);
             animation: notifSlideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             max-width: 90%;
             text-align: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255, 180, 0, 0.5);
         }
-        .notification-bar.show {
-            display: block;
-            animation: notifSlideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                       fireBtnPulse 1.5s ease-in-out infinite;
-        }
+        .notification-bar.show { display: block; }
         @keyframes notifSlideDown {
             0% { transform: translateX(-50%) translateY(-100px); opacity: 0; }
             100% { transform: translateX(-50%) translateY(0); opacity: 1; }
@@ -1225,6 +998,7 @@
         @media (max-width: 480px) {
             .btn { font-size: 16px; padding: 14px 16px; }
             .btn-spin { font-size: 17px; }
+            .pointer { font-size: 26px; top: -12px; }
             .result-box .prize-desc { font-size: 20px; }
             .result-box.winner .prize-desc { font-size: 24px; }
             .admin-panel .prize-item { flex-direction: column; align-items: stretch; }
@@ -1236,19 +1010,13 @@
             .admin-panel .prize-item .prize-info { min-width: 70px; }
             .admin-panel .prize-item .prize-prob .prob-input { width: 38px; }
             .sound-settings { gap: 12px; padding: 4px 12px; }
-            .wheel-wrapper { padding: 20px; }
-            .pointer { width: 36px; height: 92px; top: -58px; }
-            .spear-tip { width: 26px; height: 36px; }
-            .spear-collar { width: 26px; top: 42px; }
-            .spear-shaft { height: 44px; }
-            .spear-feather { width: 32px; height: 15px; }
         }
 
         @media (max-width: 380px) {
             .btn-spin { font-size: 15px; padding: 12px 14px; }
             .result-box .prize-desc { font-size: 17px; }
             .result-box.winner .prize-desc { font-size: 20px; }
-            .wheel-wrapper { padding: 16px; }
+            .pointer { font-size: 22px; top: -10px; }
         }
     </style>
 </head>
@@ -1258,23 +1026,20 @@
         <img id="bgImage" src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1920&q=80" alt="Background">
     </div>
 
-    <div class="fire-overlay"></div>
-    <div class="embers-layer" id="embersLayer"></div>
-
     <div class="notification-bar" id="notificationBar">
-        🔥 مبروك! لقد فزت بـ <span id="notifPrizeName">جائزة</span>!
+        🎉 مبروك! لقد فزت بـ <span id="notifPrizeName">جائزة</span>!
     </div>
 
     <div class="user-status" id="userStatus"></div>
 
     <div class="error-container" id="errorContainer">
-        <div class="error-icon">🔥</div>
+        <div class="error-icon">⚠️</div>
         <div class="error-title">يجب الدخول من البوت</div>
         <div class="error-text">
             لا يمكن الوصول إلى معرف المستخدم.<br>
             يرجى فتح العجلة من خلال <span class="highlight">بوت IChancy</span>.
         </div>
-        <button class="btn-open-bot" onclick="window.open('https://t.me/IChancyBot', '_blank')">🔥 فتح البوت</button>
+        <button class="btn-open-bot" onclick="window.open('https://t.me/IChancyBot', '_blank')">🚀 فتح البوت</button>
     </div>
 
     <div class="loading-screen" id="loadingScreen">
@@ -1287,28 +1052,19 @@
         </div>
     </div>
 
+    <!-- ===== مشهد القلعة العملاقة ===== -->
+    <div class="castle-scene" id="castleScene">
+        <div class="castle-layer castle-far"></div>
+        <div class="castle-door"></div>
+        <div class="castle-flash"></div>
+    </div>
+
     <!-- ===== العجلة ===== -->
     <div class="wheel-wrapper" id="wheelWrapper">
-        <div class="swords-behind">
-            <div class="sword sword-left">
-                <div class="sword-blade"></div>
-                <div class="sword-guard"></div>
-                <div class="sword-grip"></div>
-                <div class="sword-pommel"></div>
-            </div>
-            <div class="sword sword-right">
-                <div class="sword-blade"></div>
-                <div class="sword-guard"></div>
-                <div class="sword-grip"></div>
-                <div class="sword-pommel"></div>
-            </div>
-        </div>
-
         <div class="wheel-container">
-            <div class="fire-halo"></div>
-            <div class="fire-flames" id="fireFlames"></div>
-            <div class="sparks-layer" id="sparksLayer"></div>
-            <div class="fire-ring"></div>
+            <div class="wave-ring-gold"></div>
+            <div class="wave-ring-gold"></div>
+            <div class="wave-ring-gold"></div>
 
             <div class="glow-bubbles-container">
                 <div class="glow-bubble"></div>
@@ -1321,15 +1077,13 @@
                 <div class="glow-bubble"></div>
             </div>
 
-            <!-- الرمح - الرأس في الأسفل -->
-            <div class="pointer" id="pointer">
-                <div class="spear-feather"></div>
-                <div class="spear-shaft"></div>
-                <div class="spear-collar"></div>
-                <div class="spear-tip"></div>
-            </div>
+            <div class="lava-sparks" id="lavaSparks"></div>
 
-            <canvas id="wheelCanvas" width="600" height="600"></canvas>
+            <div class="neon-frame-gold"></div>
+
+            <div class="pointer" id="pointer">🔽</div>
+
+            <canvas id="wheelCanvas" width="500" height="500"></canvas>
         </div>
     </div>
 
@@ -1341,7 +1095,7 @@
     <div class="actions">
         <button class="btn btn-spin" id="spinBtn" disabled>
             <span class="spinner-small"></span>
-            <span id="spinBtnText">🔥 دوّر العجلة النارية</span>
+            <span id="spinBtnText">🌋 تدوير العجلة</span>
         </button>
     </div>
 
@@ -1371,7 +1125,7 @@
 
     <div class="admin-panel" id="adminPanel">
         <div class="panel-title">
-            🔥 لوحة الإدارة
+            ⚙️ لوحة الإدارة
             <span class="badge">ADMIN</span>
         </div>
         <div id="prizesList"></div>
@@ -1381,8 +1135,8 @@
             <input type="text" id="newPrizeIcon" placeholder="🎁" style="max-width:44px;">
             <input type="text" id="newPrizeDesc" placeholder="الوصف (يظهر للجمهور)" style="flex:1.5;">
             <input type="number" id="newPrizeProb" placeholder="نسبة" style="max-width:55px;">
-            <input type="color" id="newPrizeColor" value="#1a1a2e" style="max-width:34px;padding:2px;">
-            <input type="color" id="newPrizeColor2" value="#16213e" style="max-width:34px;padding:2px;">
+            <input type="color" id="newPrizeColor" value="#1a1a1f" style="max-width:34px;padding:2px;">
+            <input type="color" id="newPrizeColor2" value="#0a0a0f" style="max-width:34px;padding:2px;">
             <button class="btn-add" id="addPrizeBtn">➕</button>
         </div>
 
@@ -1404,7 +1158,7 @@
             </div>
             <div class="setting-row">
                 <label>مركز العجلة</label>
-                <input type="text" id="editCenterIcon" placeholder="🎯" style="max-width:80px;">
+                <input type="text" id="editCenterIcon" placeholder="🌋" style="max-width:80px;">
                 <button class="btn-save" data-setting="center_icon" data-field="editCenterIcon">💾 حفظ</button>
             </div>
             <div class="setting-row">
@@ -1463,76 +1217,7 @@
         let spinDuration = 3500;
 
         // ================================================================
-        //   توليد الشرر في الخلفية
-        // ================================================================
-        (function spawnEmbers() {
-            const layer = document.getElementById('embersLayer');
-            if (!layer) return;
-            for (let i = 0; i < 30; i++) {
-                const e = document.createElement('div');
-                e.className = 'ember';
-                const size = 2 + Math.random() * 5;
-                e.style.width = size + 'px';
-                e.style.height = size + 'px';
-                e.style.left = Math.random() * 100 + '%';
-                e.style.animationDuration = (6 + Math.random() * 8) + 's';
-                e.style.animationDelay = (Math.random() * 8) + 's';
-                e.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
-                layer.appendChild(e);
-            }
-        })();
-
-        // ================================================================
-        //   توليد ألسنة اللهب (للقارج من الإطار)
-        // ================================================================
-        (function spawnFlames() {
-            const container = document.getElementById('fireFlames');
-            if (!container) return;
-            const count = 20;
-            for (let i = 0; i < count; i++) {
-                const angle = (i / count) * 360;
-                const flame = document.createElement('div');
-                flame.className = 'flame';
-                const rad = (angle - 90) * Math.PI / 180;
-                const radius = 50;
-                const leftPct = 50 + Math.cos(rad) * radius;
-                const topPct = 50 + Math.sin(rad) * radius;
-                flame.style.left = leftPct + '%';
-                flame.style.top = topPct + '%';
-                // توجيه الشعلة للخارج: القاعدة على المحيط والرأس للخارج
-                flame.style.transform = `translate(-50%, -100%) rotate(${angle + 180}deg)`;
-                const scale = 0.85 + Math.random() * 0.5;
-                flame.style.width = (24 * scale) + 'px';
-                flame.style.height = (48 * scale) + 'px';
-                flame.style.animationDelay = (i * 0.11 + Math.random() * 0.4) + 's';
-                flame.style.animationDuration = (1.1 + Math.random() * 0.5) + 's';
-                container.appendChild(flame);
-            }
-        })();
-
-        // ================================================================
-        //   توليد الشرر المتصاعد من الإطار
-        // ================================================================
-        (function spawnSparks() {
-            const container = document.getElementById('sparksLayer');
-            if (!container) return;
-            for (let i = 0; i < 24; i++) {
-                const spark = document.createElement('div');
-                spark.className = 'spark';
-                const angle = Math.random() * 360;
-                const rad = angle * Math.PI / 180;
-                const radius = 48;
-                spark.style.left = (50 + Math.cos(rad) * radius) + '%';
-                spark.style.top = (50 + Math.sin(rad) * radius) + '%';
-                spark.style.animationDelay = (Math.random() * 2.5) + 's';
-                spark.style.animationDuration = (1.8 + Math.random() * 1.5) + 's';
-                spark.style.setProperty('--sx', (Math.random() * 60 - 30) + 'px');
-                container.appendChild(spark);
-            }
-        })();
-
-        // ================================================================
-        //                      ConnectionManager
+        //                      نظام إعادة محاولة الاتصال
         // ================================================================
         class ConnectionManager {
             constructor() {
@@ -1540,9 +1225,11 @@
                 this.retryDelay = 2000;
                 this.timeout = 50000;
             }
+
             async fetchWithRetry(url, options = {}, retryCount = 0) {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
                 try {
                     const response = await fetch(url, { ...options, signal: controller.signal });
                     clearTimeout(timeoutId);
@@ -1550,7 +1237,9 @@
                     return response;
                 } catch (error) {
                     clearTimeout(timeoutId);
-                    if (error.name === 'AbortError') throw new Error('انتهت مهلة الاتصال بالخادم (50 ثانية)');
+                    if (error.name === 'AbortError') {
+                        throw new Error('انتهت مهلة الاتصال بالخادم (50 ثانية)');
+                    }
                     if (retryCount < this.maxRetries) {
                         const delay = this.retryDelay * (retryCount + 1);
                         console.log(`محاولة إعادة الاتصال ${retryCount + 1}/${this.maxRetries} بعد ${delay}ms`);
@@ -1561,384 +1250,276 @@
                 }
             }
         }
+
         const connectionManager = new ConnectionManager();
 
         // ================================================================
-        //   نظام الصوت الملحمي الناري
+        //                      نظام الصوت البركاني الملحمي
         // ================================================================
-        class FireSoundManager {
+        class AdvancedSoundManager {
             constructor() {
                 this.initialized = false;
                 this.audioContext = null;
-                this.noiseBuffer = null;
-                this.spinSource = null;
-                this.spinLfo = null;
-                this.spinGain = null;
-                this.spinInterval = null;
-                this.ambientSource = null;
-                this.ambientGain = null;
-                this.ambientLfo = null;
-                this.ambientFilter = null;
-                this.ambientActive = false;
+                this.isPlaying = false;
+                this.spinSoundInterval = null;
+                this.lavaRumble = null;
             }
 
             init() {
                 if (this.initialized) return;
                 try {
                     this.audioContext = new(window.AudioContext || window.webkitAudioContext)();
-                    const bufferSize = this.audioContext.sampleRate * 3;
-                    const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-                    const data = buffer.getChannelData(0);
-                    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-                    this.noiseBuffer = buffer;
                     this.initialized = true;
-                } catch (e) { console.warn('Web Audio not supported'); }
+                } catch (e) {
+                    console.warn('Web Audio not supported');
+                }
             }
 
-            // ====== صوت الخلفية: هدير لهب هادئ مستمر ======
-            startAmbient() {
-                if (!soundEnabled || !this.initialized || this.ambientActive) return;
-                try {
-                    const ctx = this.audioContext;
-                    // مصدر ضوضاء
-                    const source = ctx.createBufferSource();
-                    source.buffer = this.noiseBuffer;
-                    source.loop = true;
-
-                    // فلتر منخفض لتشكيل الهدير
-                    const filter = ctx.createBiquadFilter();
-                    filter.type = 'lowpass';
-                    filter.frequency.value = 450;
-                    filter.Q.value = 1.2;
-
-                    // فلتر ثانٍ للتحكم بالترددات العالية
-                    const filter2 = ctx.createBiquadFilter();
-                    filter2.type = 'lowpass';
-                    filter2.frequency.value = 900;
-
-                    // كسب منخفض جداً
-                    const gain = ctx.createGain();
-                    gain.gain.setValueAtTime(0, ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.035, ctx.currentTime + 1.5);
-
-                    // LFO بطيء لتذبذب صوت اللهب
-                    const lfo = ctx.createOscillator();
-                    lfo.frequency.value = 0.3;
-                    lfo.type = 'sine';
-                    const lfoGain = ctx.createGain();
-                    lfoGain.gain.value = 100;
-                    lfo.connect(lfoGain);
-                    lfoGain.connect(filter.frequency);
-
-                    source.connect(filter);
-                    filter.connect(filter2);
-                    filter2.connect(gain);
-                    gain.connect(ctx.destination);
-
-                    source.start();
-                    lfo.start();
-
-                    this.ambientSource = source;
-                    this.ambientGain = gain;
-                    this.ambientLfo = lfo;
-                    this.ambientFilter = filter;
-                    this.ambientActive = true;
-                } catch (e) { console.warn('ambient err', e); }
-            }
-
-            stopAmbient() {
-                if (!this.ambientActive || !this.ambientGain) return;
-                try {
-                    const ctx = this.audioContext;
-                    const g = this.ambientGain.gain;
-                    g.cancelScheduledValues(ctx.currentTime);
-                    g.setValueAtTime(g.value, ctx.currentTime);
-                    g.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
-                    const s = this.ambientSource;
-                    const l = this.ambientLfo;
-                    setTimeout(() => {
-                        try { s.stop(); l.stop(); } catch (e) {}
-                    }, 600);
-                } catch (e) {}
-                this.ambientActive = false;
-                this.ambientSource = null;
-                this.ambientGain = null;
-                this.ambientLfo = null;
-            }
-
-            // ====== إيقاف كل الأصوات ======
             stopAll() {
                 this.stopSpinSound();
-                this.stopAmbient();
+                if (this.lavaRumble) {
+                    try { this.lavaRumble.stop(); } catch (e) {}
+                    this.lavaRumble = null;
+                }
+                if (this.audioContext) {
+                    try {
+                        this.audioContext.close();
+                        this.audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                    } catch (e) {}
+                }
+                this.isPlaying = false;
             }
 
-            // ====== صوت التدوير: هدير لهب + شرر ======
+            playLavaRumble() {
+                if (!soundEnabled || !this.initialized) return;
+                try {
+                    const ctx = this.audioContext;
+                    const bufSize = ctx.sampleRate * 2;
+                    const buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.15;
+                    const src = ctx.createBufferSource();
+                    src.buffer = buffer;
+                    src.loop = true;
+
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.value = 120;
+
+                    const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.0, ctx.currentTime + 6);
+
+                    src.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(ctx.destination);
+                    src.start();
+                    this.lavaRumble = src;
+                    setTimeout(() => {
+                        try { src.stop(); } catch (e) {}
+                        this.lavaRumble = null;
+                    }, 6000);
+                } catch (e) { console.warn('rumble error', e); }
+            }
+
             playSpinSound() {
                 if (!soundEnabled || !this.initialized) return;
                 this.stopSpinSound();
+                this.playLavaRumble();
                 try {
                     const ctx = this.audioContext;
-
-                    const source = ctx.createBufferSource();
-                    source.buffer = this.noiseBuffer;
-                    source.loop = true;
-
-                    const filter = ctx.createBiquadFilter();
-                    filter.type = 'lowpass';
-                    filter.frequency.setValueAtTime(900, ctx.currentTime);
-                    filter.frequency.linearRampToValueAtTime(350, ctx.currentTime + 3.5);
-
-                    const gain = ctx.createGain();
-                    gain.gain.setValueAtTime(0, ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + 0.4);
-                    gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 3.2);
-                    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 3.8);
-
-                    const lfo = ctx.createOscillator();
-                    lfo.frequency.value = 9;
-                    lfo.type = 'sine';
-                    const lfoGain = ctx.createGain();
-                    lfoGain.gain.value = 180;
-                    lfo.connect(lfoGain);
-                    lfoGain.connect(filter.frequency);
-
-                    source.connect(filter);
-                    filter.connect(gain);
-                    gain.connect(ctx.destination);
-
-                    source.start();
-                    lfo.start();
-                    this.spinSource = source;
-                    this.spinLfo = lfo;
-                    this.spinGain = gain;
-
-                    setTimeout(() => {
-                        try { source.stop(); lfo.stop(); } catch (e) {}
-                        this.spinSource = null;
-                    }, 4200);
-
-                    // شرر خفيف
-                    let cnt = 0;
-                    if (this.spinInterval) clearInterval(this.spinInterval);
-                    this.spinInterval = setInterval(() => {
-                        if (!soundEnabled) { clearInterval(this.spinInterval); return; }
+                    let count = 0;
+                    this.spinSoundInterval = setInterval(() => {
+                        if (!soundEnabled || !this.initialized) {
+                            this.stopSpinSound();
+                            return;
+                        }
                         try {
                             const t = ctx.currentTime;
                             const osc = ctx.createOscillator();
-                            const g = ctx.createGain();
-                            osc.connect(g);
-                            g.connect(ctx.destination);
-                            osc.frequency.setValueAtTime(1200 + Math.random() * 1400, t);
-                            osc.type = 'triangle';
-                            g.gain.setValueAtTime(0.018, t);
-                            g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+                            const gain = ctx.createGain();
+                            const filter = ctx.createBiquadFilter();
+                            filter.type = 'bandpass';
+                            filter.frequency.value = 400 + Math.random() * 200;
+                            filter.Q.value = 8;
+
+                            osc.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(ctx.destination);
+
+                            const baseFreq = 140 + Math.sin(count * 0.5) * 20;
+                            osc.frequency.setValueAtTime(baseFreq, t);
+                            osc.type = 'square';
+
+                            gain.gain.setValueAtTime(0.04, t);
+                            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+
                             osc.start(t);
-                            osc.stop(t + 0.05);
-                            cnt++;
-                            if (cnt > 35) clearInterval(this.spinInterval);
+                            osc.stop(t + 0.08);
+
+                            if (Math.random() > 0.7) {
+                                const s = ctx.createOscillator();
+                                const sg = ctx.createGain();
+                                s.connect(sg);
+                                sg.connect(ctx.destination);
+                                s.frequency.setValueAtTime(1200 + Math.random() * 800, t);
+                                s.type = 'sawtooth';
+                                sg.gain.setValueAtTime(0.008, t);
+                                sg.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+                                s.start(t);
+                                s.stop(t + 0.04);
+                            }
+                            count++;
                         } catch (e) {}
-                    }, 110);
-                } catch (e) { console.warn('spin err', e); }
+                    }, 105);
+                    setTimeout(() => this.stopSpinSound(), 6000);
+                } catch (e) {}
             }
 
             stopSpinSound() {
-                if (this.spinInterval) {
-                    clearInterval(this.spinInterval);
-                    this.spinInterval = null;
+                if (this.spinSoundInterval) {
+                    clearInterval(this.spinSoundInterval);
+                    this.spinSoundInterval = null;
                 }
-                if (this.spinSource) {
-                    try { this.spinSource.stop(); } catch (e) {}
-                    this.spinSource = null;
+                if (this.lavaRumble) {
+                    try { this.lavaRumble.stop(); } catch (e) {}
+                    this.lavaRumble = null;
                 }
-                if (this.spinLfo) {
-                    try { this.spinLfo.stop(); } catch (e) {}
-                    this.spinLfo = null;
-                }
-                this.spinGain = null;
             }
 
-            // ====== صوت الفوز: انفجار + لحن انتصار + هدير ======
             playWinSound() {
                 if (!soundEnabled || !this.initialized) return;
                 try {
                     const ctx = this.audioContext;
                     const now = ctx.currentTime;
 
-                    // 1) انفجار افتتاحي
-                    const burst = ctx.createBufferSource();
-                    burst.buffer = this.noiseBuffer;
-                    const bFilter = ctx.createBiquadFilter();
-                    bFilter.type = 'lowpass';
-                    bFilter.frequency.setValueAtTime(3000, now);
-                    bFilter.frequency.exponentialRampToValueAtTime(200, now + 0.7);
-                    const bGain = ctx.createGain();
-                    bGain.gain.setValueAtTime(0.3, now);
-                    bGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-                    burst.connect(bFilter);
-                    bFilter.connect(bGain);
-                    bGain.connect(ctx.destination);
-                    burst.start(now);
-                    burst.stop(now + 0.8);
-
-                    // 2) لحن انتصار ملحمي (صاعد)
-                    const melody = [
-                        [392, 0.16, 'sawtooth'],
-                        [523, 0.16, 'sawtooth'],
-                        [659, 0.16, 'square'],
-                        [784, 0.20, 'square'],
-                        [988, 0.22, 'square'],
-                        [1175, 0.35, 'square'],
-                        [1568, 0.5, 'square']
-                    ];
-                    melody.forEach(([freq, dur, type], i) => {
-                        const start = now + 0.1 + i * 0.14;
-                        // نغمة رئيسية
+                    const chord = [261.63, 329.63, 392.00, 523.25];
+                    chord.forEach((freq, i) => {
                         const osc = ctx.createOscillator();
-                        const g = ctx.createGain();
-                        osc.connect(g);
-                        g.connect(ctx.destination);
-                        osc.type = type;
-                        osc.frequency.setValueAtTime(freq, start);
-                        g.gain.setValueAtTime(0.0, start);
-                        g.gain.linearRampToValueAtTime(0.075, start + 0.015);
-                        g.gain.exponentialRampToValueAtTime(0.001, start + dur);
-                        osc.start(start);
-                        osc.stop(start + dur);
-
-                        // نغمة ثانية (هارموني)
-                        const osc2 = ctx.createOscillator();
-                        const g2 = ctx.createGain();
-                        osc2.connect(g2);
-                        g2.connect(ctx.destination);
-                        osc2.type = 'sine';
-                        osc2.frequency.setValueAtTime(freq * 2, start);
-                        g2.gain.setValueAtTime(0.0, start);
-                        g2.gain.linearRampToValueAtTime(0.03, start + 0.015);
-                        g2.gain.exponentialRampToValueAtTime(0.001, start + dur);
-                        osc2.start(start);
-                        osc2.stop(start + dur);
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(freq, now + i * 0.05);
+                        osc.type = 'triangle';
+                        gain.gain.setValueAtTime(0.0, now + i * 0.05);
+                        gain.gain.linearRampToValueAtTime(0.06, now + i * 0.05 + 0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 1.2);
+                        osc.start(now + i * 0.05);
+                        osc.stop(now + i * 0.05 + 1.3);
                     });
 
-                    // 3) هدير ناري خلفي
-                    const roar = ctx.createBufferSource();
-                    roar.buffer = this.noiseBuffer;
-                    const rFilter = ctx.createBiquadFilter();
-                    rFilter.type = 'bandpass';
-                    rFilter.frequency.setValueAtTime(400, now + 0.9);
-                    rFilter.Q.setValueAtTime(0.9, now + 0.9);
-                    const rGain = ctx.createGain();
-                    rGain.gain.setValueAtTime(0.0, now + 0.9);
-                    rGain.gain.linearRampToValueAtTime(0.1, now + 1.3);
-                    rGain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
-                    roar.connect(rFilter);
-                    rFilter.connect(rGain);
-                    rGain.connect(ctx.destination);
-                    roar.start(now + 0.9);
-                    roar.stop(now + 3.3);
-
-                    // 4) شرر احتفالي
-                    for (let i = 0; i < 12; i++) {
-                        const t = now + 1 + Math.random() * 2;
+                    const notes = [523, 659, 784, 1046, 1318];
+                    notes.forEach((f, i) => {
+                        const t = now + 0.5 + i * 0.12;
                         const osc = ctx.createOscillator();
-                        const g = ctx.createGain();
-                        osc.connect(g);
-                        g.connect(ctx.destination);
-                        osc.frequency.setValueAtTime(2000 + Math.random() * 2000, t);
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(f, t);
                         osc.type = 'sine';
-                        g.gain.setValueAtTime(0.015, t);
-                        g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+                        gain.gain.setValueAtTime(0.0, t);
+                        gain.gain.linearRampToValueAtTime(0.07, t + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
                         osc.start(t);
-                        osc.stop(t + 0.15);
-                    }
-                } catch (e) { console.warn('win err', e); }
+                        osc.stop(t + 0.5);
+                    });
+
+                    setTimeout(() => {
+                        const t = ctx.currentTime;
+                        const bufSize = ctx.sampleRate * 1.5;
+                        const buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+                        const data = buffer.getChannelData(0);
+                        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+                        const src = ctx.createBufferSource();
+                        src.buffer = buffer;
+                        const filt = ctx.createBiquadFilter();
+                        filt.type = 'lowpass';
+                        filt.frequency.value = 200;
+                        const g = ctx.createGain();
+                        g.gain.value = 0.05;
+                        src.connect(filt);
+                        filt.connect(g);
+                        g.connect(ctx.destination);
+                        src.start();
+                    }, 200);
+
+                    setTimeout(() => { this.isPlaying = false; }, 3000);
+                } catch (e) {
+                    console.warn('Win sound error:', e);
+                    this.isPlaying = false;
+                }
             }
 
-            // ====== صوت الخسارة: حرق + تلاشي + نغمة داكنة ======
             playLoseSound() {
                 if (!soundEnabled || !this.initialized) return;
                 try {
                     const ctx = this.audioContext;
                     const now = ctx.currentTime;
 
-                    // 1) صوت حرق/تلاشي
-                    const burn = ctx.createBufferSource();
-                    burn.buffer = this.noiseBuffer;
-                    const bF = ctx.createBiquadFilter();
-                    bF.type = 'lowpass';
-                    bF.frequency.setValueAtTime(1200, now);
-                    bF.frequency.exponentialRampToValueAtTime(150, now + 1.3);
-                    const bG = ctx.createGain();
-                    bG.gain.setValueAtTime(0.13, now);
-                    bG.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
-                    burn.connect(bF);
-                    bF.connect(bG);
-                    bG.connect(ctx.destination);
-                    burn.start(now);
-                    burn.stop(now + 1.4);
-
-                    // 2) نغمة هبوط حزينة (تون منخفض)
-                    const notes = [
-                        [392, 0.3, 'sawtooth'],
-                        [311, 0.35, 'sawtooth'],
-                        [261, 0.4, 'triangle'],
-                        [196, 0.6, 'triangle'],
-                        [130, 0.7, 'sine']
-                    ];
-                    notes.forEach(([freq, dur, type], i) => {
-                        const start = now + i * 0.22;
+                    const notes = [349.23, 293.66, 261.63, 196.00];
+                    notes.forEach((f, i) => {
+                        const t = now + i * 0.22;
                         const osc = ctx.createOscillator();
-                        const g = ctx.createGain();
-                        osc.connect(g);
-                        g.connect(ctx.destination);
-                        osc.type = type;
-                        osc.frequency.setValueAtTime(freq, start);
-                        osc.frequency.exponentialRampToValueAtTime(freq * 0.6, start + dur);
-                        g.gain.setValueAtTime(0.07, start);
-                        g.gain.exponentialRampToValueAtTime(0.001, start + dur);
-                        osc.start(start);
-                        osc.stop(start + dur);
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(f, t);
+                        osc.type = 'sawtooth';
+                        gain.gain.setValueAtTime(0.045, t);
+                        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+                        osc.start(t);
+                        osc.stop(t + 0.35);
                     });
 
-                    // 3) همهمة منخفضة في النهاية (غروب)
-                    const drone = ctx.createOscillator();
-                    const dGain = ctx.createGain();
-                    drone.connect(dGain);
-                    dGain.connect(ctx.destination);
-                    drone.frequency.setValueAtTime(80, now + 1);
-                    drone.type = 'sine';
-                    dGain.gain.setValueAtTime(0.0, now + 1);
-                    dGain.gain.linearRampToValueAtTime(0.04, now + 1.3);
-                    dGain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
-                    drone.start(now + 1);
-                    drone.stop(now + 2.5);
-                } catch (e) { console.warn('lose err', e); }
+                    const bufSize = ctx.sampleRate * 1.2;
+                    const buffer = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * 0.3 * (1 - i / bufSize);
+                    }
+                    const src = ctx.createBufferSource();
+                    src.buffer = buffer;
+                    const filt = ctx.createBiquadFilter();
+                    filt.type = 'bandpass';
+                    filt.frequency.value = 300;
+                    const g = ctx.createGain();
+                    g.gain.value = 0.04;
+                    src.connect(filt);
+                    filt.connect(g);
+                    g.connect(ctx.destination);
+                    src.start(now + 0.6);
+
+                    setTimeout(() => { this.isPlaying = false; }, 2000);
+                } catch (e) {
+                    console.warn('Lose sound error:', e);
+                    this.isPlaying = false;
+                }
             }
 
-            // ====== صوت الإشعال (start) ======
             playStartSound() {
                 if (!soundEnabled || !this.initialized) return;
                 try {
                     const ctx = this.audioContext;
                     const now = ctx.currentTime;
-                    const noise = ctx.createBufferSource();
-                    noise.buffer = this.noiseBuffer;
-                    const filter = ctx.createBiquadFilter();
-                    filter.type = 'highpass';
-                    filter.frequency.setValueAtTime(300, now);
-                    filter.frequency.exponentialRampToValueAtTime(3000, now + 0.5);
-                    const gain = ctx.createGain();
-                    gain.gain.setValueAtTime(0.0, now);
-                    gain.gain.linearRampToValueAtTime(0.18, now + 0.08);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
-                    noise.connect(filter);
-                    filter.connect(gain);
-                    gain.connect(ctx.destination);
-                    noise.start(now);
-                    noise.stop(now + 0.55);
-                } catch (e) { console.warn('start err', e); }
+                    [196, 246.94, 293.66].forEach((freq, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+                        osc.type = 'triangle';
+                        gain.gain.setValueAtTime(0.03, now + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.2);
+                        osc.start(now + i * 0.08);
+                        osc.stop(now + i * 0.08 + 0.2);
+                    });
+                } catch (e) {
+                    console.warn('Start sound error:', e);
+                }
             }
         }
-        const soundManager = new FireSoundManager();
+
+        const soundManager = new AdvancedSoundManager();
 
         // ================================================================
         //                      جلب USER_ID
@@ -1962,12 +1543,15 @@
                 }
             } catch (e) {}
             id = localStorage.getItem('wheel_user_id');
-            if (id) { USER_ID = parseInt(id); return USER_ID; }
+            if (id) {
+                USER_ID = parseInt(id);
+                return USER_ID;
+            }
             return null;
         }
 
         // ================================================================
-        //   رسم العجلة - أقسام حمم بركانية واضحة
+        //                      رسم العجلة (بازلت + حمم)
         // ================================================================
         function drawWheel(prizes, highlightIndex = -1, rotation = 0) {
             const canvas = document.getElementById('wheelCanvas');
@@ -1983,6 +1567,7 @@
                 wrapper.classList.remove('show');
                 return;
             }
+
             noPrizes.style.display = 'none';
             wrapper.classList.add('show');
             ctx.clearRect(0, 0, w, h);
@@ -1990,18 +1575,11 @@
             const total = prizes.length;
             const step = (2 * Math.PI) / total;
 
-            // خلفية
-            ctx.beginPath();
-            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-            ctx.fillStyle = '#0a0300';
-            ctx.fill();
-
             prizes.forEach((p, i) => {
                 const start = i * step + rotation - Math.PI / 2;
                 const end = start + step;
                 const isHighlight = (i === highlightIndex);
 
-                // ===== 1) القطاع الأساسي بتدرج الحمم =====
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, r, start, end);
@@ -2009,161 +1587,112 @@
 
                 const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
                 if (isHighlight) {
-                    grad.addColorStop(0, '#fff5b0');
-                    grad.addColorStop(0.2, '#ffdd00');
-                    grad.addColorStop(0.5, '#ff8800');
-                    grad.addColorStop(0.8, '#ff4400');
-                    grad.addColorStop(1, '#aa1100');
+                    grad.addColorStop(0, '#FFB300');
+                    grad.addColorStop(0.4, '#FF6B00');
+                    grad.addColorStop(1, '#4a0e00');
                 } else {
-                    // تدرج حمم لكل قطاع - كل قطاع يختلف قليلاً
-                    const baseSeed = i * 0.1;
-                    grad.addColorStop(0, `hsl(${10 + baseSeed * 5}, 95%, 25%)`);
-                    grad.addColorStop(0.3, `hsl(${8 + baseSeed * 5}, 90%, 15%)`);
-                    grad.addColorStop(0.6, `hsl(${5 + baseSeed * 5}, 85%, 9%)`);
-                    grad.addColorStop(1, '#0a0200');
+                    grad.addColorStop(0, '#1a1a1f');
+                    grad.addColorStop(0.45, '#0d0d12');
+                    grad.addColorStop(0.85, '#050507');
+                    grad.addColorStop(1, '#0a0a0f');
                 }
                 ctx.fillStyle = grad;
                 ctx.fill();
 
-                // ===== 2) شقوق الحمم داخل القطاع =====
-                if (!isHighlight) {
-                    ctx.save();
-                    // مسار القطاع (يجب إعادة إنشائه قبل clip)
+                // عروق الحمم
+                ctx.save();
+                ctx.clip();
+                const veins = isHighlight ? 5 : 3;
+                for (let v = 0; v < veins; v++) {
                     ctx.beginPath();
-                    ctx.moveTo(cx, cy);
-                    ctx.arc(cx, cy, r, start, end);
-                    ctx.closePath();
-                    ctx.clip();
-
-                    // 3 شقوق عشوائية
-                    const veins = 3;
-                    for (let v = 0; v < veins; v++) {
-                        const aOff = start + step * (0.25 + v * 0.25) + (Math.random() - 0.5) * 0.1;
-                        const rStart = r * (0.15 + Math.random() * 0.1);
-                        const rEnd = r * (0.7 + Math.random() * 0.15);
-                        const x1 = cx + Math.cos(aOff) * rStart;
-                        const y1 = cy + Math.sin(aOff) * rStart;
-                        const x2 = cx + Math.cos(aOff) * rEnd;
-                        const y2 = cy + Math.sin(aOff) * rEnd;
-
-                        // هالة برتقالية
-                        ctx.beginPath();
-                        ctx.moveTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                        ctx.strokeStyle = 'rgba(255, 100, 0, 0.75)';
-                        ctx.lineWidth = 6;
-                        ctx.shadowColor = '#ff4400';
-                        ctx.shadowBlur = 18;
-                        ctx.lineCap = 'round';
-                        ctx.stroke();
-
-                        // خط حمم ذهبي
-                        ctx.beginPath();
-                        ctx.moveTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                        ctx.strokeStyle = '#ffdd33';
-                        ctx.lineWidth = 2.5;
-                        ctx.shadowColor = '#ffaa00';
-                        ctx.shadowBlur = 10;
-                        ctx.stroke();
-
-                        // نقطة متوهجة
-                        ctx.beginPath();
-                        ctx.arc(x1 + (x2 - x1) * 0.4, y1 + (y2 - y1) * 0.4, 3.5, 0, Math.PI * 2);
-                        ctx.fillStyle = '#ffee88';
-                        ctx.shadowColor = '#ffaa00';
-                        ctx.shadowBlur = 12;
-                        ctx.fill();
-                    }
-                    ctx.restore();
-                    ctx.shadowBlur = 0;
+                    const baseAngle = start + (v + 0.5) * (step / veins);
+                    const len = r * (0.55 + Math.random() * 0.35);
+                    const x1 = cx + Math.cos(baseAngle) * (r * 0.15);
+                    const y1 = cy + Math.sin(baseAngle) * (r * 0.15);
+                    const x2 = cx + Math.cos(baseAngle + 0.08) * (len * 0.5);
+                    const y2 = cy + Math.sin(baseAngle + 0.08) * (len * 0.5);
+                    const x3 = cx + Math.cos(baseAngle - 0.05) * len;
+                    const y3 = cy + Math.sin(baseAngle - 0.05) * len;
+                    ctx.moveTo(x1, y1);
+                    ctx.quadraticCurveTo(x2, y2, x3, y3);
+                    ctx.strokeStyle = isHighlight
+                        ? `rgba(255, 255, 200, ${0.7 + Math.random() * 0.3})`
+                        : `rgba(255, ${60 + Math.random() * 60}, 0, ${0.55 + Math.random() * 0.35})`;
+                    ctx.lineWidth = isHighlight ? 3 : (1.2 + Math.random() * 1.2);
+                    ctx.shadowColor = '#FF6B00';
+                    ctx.shadowBlur = isHighlight ? 18 : 10;
+                    ctx.stroke();
                 }
-
-                // ===== 3) حدود القطاع =====
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, r, start, end);
-                ctx.closePath();
-                ctx.strokeStyle = isHighlight ? 'rgba(255, 240, 150, 1)' : 'rgba(255, 130, 20, 0.85)';
-                ctx.lineWidth = isHighlight ? 4 : 2;
-                ctx.shadowColor = isHighlight ? '#ffdd00' : '#ff4400';
-                ctx.shadowBlur = isHighlight ? 25 : 10;
-                ctx.stroke();
+                // نقاط حمم
+                for (let d = 0; d < 6; d++) {
+                    const a = start + Math.random() * step;
+                    const dist = Math.random() * r * 0.85;
+                    ctx.beginPath();
+                    ctx.arc(cx + Math.cos(a) * dist, cy + Math.sin(a) * dist, 1 + Math.random() * 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, ${100 + Math.random() * 120}, 0, ${0.4 + Math.random() * 0.4})`;
+                    ctx.shadowColor = '#FF4500';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                }
+                ctx.restore();
                 ctx.shadowBlur = 0;
 
-                // ===== 4) الأيقونة =====
+                // حدود القسم
+                ctx.strokeStyle = isHighlight ? '#FFD700' : 'rgba(20, 20, 25, 0.9)';
+                ctx.lineWidth = isHighlight ? 2.5 : 1.2;
+                ctx.stroke();
+
                 const mid = start + step / 2;
-                const tr = r * 0.68;
+                const tr = r * 0.62;
                 const x = cx + Math.cos(mid) * tr;
                 const y = cy + Math.sin(mid) * tr;
 
                 ctx.save();
                 ctx.translate(x, y);
-                let rotFix = (mid > Math.PI / 2 && mid < 3 * Math.PI / 2) ? Math.PI : 0;
-                ctx.rotate(mid + rotFix);
-
-                ctx.shadowColor = isHighlight ? '#ffdd00' : '#ff6600';
-                ctx.shadowBlur = isHighlight ? 30 : 18;
-                const iconSize = isHighlight ? 36 : 30;
-                ctx.font = `bold ${iconSize}px sans-serif`;
+                ctx.rotate(mid + (mid > Math.PI / 2 ? Math.PI : 0));
+                ctx.fillStyle = isHighlight ? '#0a0a0a' : '#fff';
+                ctx.font = isHighlight ? 'bold 19px sans-serif' : '17px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillStyle = isHighlight ? '#ffffff' : '#ffe8b0';
+                ctx.shadowColor = isHighlight ? '#FFB300' : 'rgba(255,80,0,0.6)';
+                ctx.shadowBlur = 10;
                 ctx.fillText(p.icon || '🎁', 0, 0);
                 ctx.shadowBlur = 0;
                 ctx.restore();
-
-                // ===== 5) الوصف =====
-                if (p.description) {
-                    const textR = r * 0.88;
-                    const tx = cx + Math.cos(mid) * textR;
-                    const ty = cy + Math.sin(mid) * textR;
-                    ctx.save();
-                    ctx.translate(tx, ty);
-                    let txtFix = (mid > Math.PI / 2 && mid < 3 * Math.PI / 2) ? Math.PI : 0;
-                    ctx.rotate(mid + txtFix);
-                    ctx.font = 'bold 13px sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillStyle = isHighlight ? '#0a0505' : '#ffddaa';
-                    ctx.shadowColor = isHighlight ? '#fff5b0' : '#000000';
-                    ctx.shadowBlur = 6;
-                    let txt = p.description;
-                    if (txt.length > 12) txt = txt.substring(0, 12) + '…';
-                    ctx.fillText(txt, 0, 0);
-                    ctx.shadowBlur = 0;
-                    ctx.restore();
-                }
             });
 
-            // ===== 6) المركز =====
-            const centerR = r * 0.15;
-            const centerIcon = settingsCache.center_icon || '🔥';
-            const cGrad = ctx.createRadialGradient(cx - 4, cy - 4, 0, cx, cy, centerR);
-            cGrad.addColorStop(0, '#fff8b0');
-            cGrad.addColorStop(0.25, '#ffdd00');
-            cGrad.addColorStop(0.6, '#ff6600');
-            cGrad.addColorStop(1, '#8b0000');
+            // مركز بركاني
+            const centerR = r * 0.16;
+            const centerIcon = settingsCache.center_icon || '🌋';
+
+            const cgrad = ctx.createRadialGradient(cx - 4, cy - 4, 0, cx, cy, centerR);
+            cgrad.addColorStop(0, '#FFD700');
+            cgrad.addColorStop(0.3, '#FF6B00');
+            cgrad.addColorStop(0.7, '#8B0000');
+            cgrad.addColorStop(1, '#1a0000');
 
             ctx.beginPath();
             ctx.arc(cx, cy, centerR, 0, 2 * Math.PI);
-            ctx.fillStyle = cGrad;
-            ctx.shadowColor = 'rgba(255, 140, 0, 0.9)';
-            ctx.shadowBlur = 45;
+            ctx.fillStyle = cgrad;
+            ctx.shadowColor = 'rgba(255, 80, 0, 0.8)';
+            ctx.shadowBlur = 50;
             ctx.fill();
             ctx.shadowBlur = 0;
 
             ctx.beginPath();
-            ctx.arc(cx, cy, centerR + 4, 0, 2 * Math.PI);
-            ctx.strokeStyle = 'rgba(255, 200, 0, 0.5)';
+            ctx.arc(cx, cy, centerR + 5, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(255, 140, 0, 0.6)';
             ctx.lineWidth = 2;
+            ctx.shadowColor = '#FF6B00';
+            ctx.shadowBlur = 20;
             ctx.stroke();
+            ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#0a0505';
-            ctx.font = '34px sans-serif';
+            ctx.fillStyle = '#fff';
+            ctx.font = '32px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = 'rgba(255, 220, 100, 0.8)';
+            ctx.shadowColor = '#FFB300';
             ctx.shadowBlur = 15;
             ctx.fillText(centerIcon, cx, cy + 1);
             ctx.shadowBlur = 0;
@@ -2175,15 +1704,19 @@
         function animateSpin(targetRotation, duration, callback) {
             const canvas = document.getElementById('wheelCanvas');
             canvas.classList.add('spinning');
+
             const startRotation = currentRotation;
             const startTime = performance.now();
+
             function animate(time) {
                 const elapsed = time - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 const easeOutCubic = 1 - Math.pow(1 - progress, 3);
                 const currentAngle = startRotation + (targetRotation - startRotation) * easeOutCubic;
                 currentRotation = currentAngle;
+
                 drawWheel(prizesCache, -1, currentAngle);
+
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
@@ -2192,6 +1725,7 @@
                     if (callback) callback();
                 }
             }
+
             requestAnimationFrame(animate);
         }
 
@@ -2204,12 +1738,18 @@
                 const data = await res.json();
                 if (data.success) {
                     settingsCache = data.settings;
-                    if (settingsCache.bg_image_url) document.getElementById('bgImage').src = settingsCache.bg_image_url;
-                    if (settingsCache.loading_image_url) document.getElementById('loadingImage').src = settingsCache.loading_image_url;
-                    if (settingsCache.spin_duration) spinDuration = parseInt(settingsCache.spin_duration) || 3500;
+                    if (settingsCache.bg_image_url) {
+                        document.getElementById('bgImage').src = settingsCache.bg_image_url;
+                    }
+                    if (settingsCache.loading_image_url) {
+                        document.getElementById('loadingImage').src = settingsCache.loading_image_url;
+                    }
+                    if (settingsCache.spin_duration) {
+                        spinDuration = parseInt(settingsCache.spin_duration) || 3500;
+                    }
                     document.getElementById('editBgImage').value = settingsCache.bg_image_url || '';
                     document.getElementById('editLoadingImage').value = settingsCache.loading_image_url || '';
-                    document.getElementById('editCenterIcon').value = settingsCache.center_icon || '⭐';
+                    document.getElementById('editCenterIcon').value = settingsCache.center_icon || '🌋';
                     document.getElementById('editSpinDuration').value = settingsCache.spin_duration || 3500;
                     document.getElementById('editIntervalHours').value = settingsCache.spin_interval_hours || 24;
                     document.getElementById('editIsActive').checked = settingsCache.is_active === 'true';
@@ -2233,7 +1773,7 @@
                 const response = await connectionManager.fetchWithRetry(`${API_BASE}/api/admin/setting`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ admin_id: ADMIN_ID, key, value: String(finalValue) })
+                    body: JSON.stringify({ admin_id: ADMIN_ID, key: key, value: String(finalValue) })
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'فشل الحفظ');
@@ -2264,7 +1804,10 @@
                 const data = await res.json();
                 if (data.success) return data.prizes || [];
                 return [];
-            } catch (e) { return []; }
+            } catch (e) {
+                console.error('Error loading public prizes:', e);
+                return [];
+            }
         }
 
         async function updatePrize(prizeId, data) {
@@ -2307,9 +1850,13 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        admin_id: ADMIN_ID, name, icon: icon || '🎁',
-                        description: description || '', probability: parseFloat(probability) || 10,
-                        color: color || '#1a1a2e', color2: color2 || '#16213e'
+                        admin_id: ADMIN_ID,
+                        name: name,
+                        icon: icon || '🎁',
+                        description: description || '',
+                        probability: parseFloat(probability) || 10,
+                        color: color || '#1a1a1f',
+                        color2: color2 || '#0a0a0f'
                     })
                 });
                 const data = await response.json();
@@ -2338,73 +1885,116 @@
             }
         }
 
+        // ================================================================
+        //                      لوحة الإدارة
+        // ================================================================
         async function renderAdminPanel() {
             const panel = document.getElementById('adminPanel');
             const list = document.getElementById('prizesList');
-            if (USER_ID !== ADMIN_ID) { panel.classList.remove('show'); return; }
+
+            if (USER_ID !== ADMIN_ID) {
+                panel.classList.remove('show');
+                return;
+            }
+
             panel.classList.add('show');
+
             const prizes = await loadAdminPrizes();
             if (!prizes || prizes.length === 0) {
-                list.innerHTML = `<div style="color:#666;font-size:13px;text-align:center;padding:20px;"><div style="font-size:30px;margin-bottom:10px;">📭</div>لا توجد جوائز<br><span style="font-size:11px;color:#555;">أضف جائزة جديدة باستخدام النموذج أدناه</span></div>`;
+                list.innerHTML = `
+                    <div style="color:#555;font-size:13px;text-align:center;padding:20px;">
+                        <div style="font-size:30px;margin-bottom:10px;">📭</div>
+                        لا توجد جوائز<br>
+                        <span style="font-size:11px;color:#444;">أضف جائزة جديدة باستخدام النموذج أدناه</span>
+                    </div>
+                `;
                 return;
             }
 
             list.innerHTML = prizes.map((p, index) => `
-                        <div class="prize-item" data-id="${p.id}" data-index="${index}">
-                            <div class="prize-icon-small">${p.icon || '🎁'}</div>
-                            <div class="prize-info">
-                                <div class="name"><input type="text" class="name-input" value="${p.name}" placeholder="اسم الجائزة"></div>
-                                <div class="desc"><input type="text" class="desc-input" value="${p.description || ''}" placeholder="الوصف (يظهر للجمهور)"></div>
-                            </div>
-                            <div class="prize-prob">
-                                <input type="number" class="prob-input" value="${p.probability}" min="0" max="100" step="0.1">
-                                <span class="prob-label">%</span>
-                                <button class="btn-save-prob" data-id="${p.id}">💾</button>
-                            </div>
-                            <div class="prize-colors">
-                                <input type="color" class="color-input" value="${p.color || '#1a1a2e'}" data-field="color" data-id="${p.id}">
-                                <input type="color" class="color-input" value="${p.color2 || '#16213e'}" data-field="color2" data-id="${p.id}">
-                            </div>
-                            <button class="btn-delete" data-id="${p.id}">✕</button>
+                <div class="prize-item" data-id="${p.id}" data-index="${index}">
+                    <div class="prize-icon-small">${p.icon || '🎁'}</div>
+                    <div class="prize-info">
+                        <div class="name">
+                            <input type="text" class="name-input" value="${p.name}" placeholder="اسم الجائزة">
                         </div>
-                    `).join('');
+                        <div class="desc">
+                            <input type="text" class="desc-input" value="${p.description || ''}" placeholder="الوصف (يظهر للجمهور)">
+                        </div>
+                    </div>
+                    <div class="prize-prob">
+                        <input type="number" class="prob-input" value="${p.probability}" min="0" max="100" step="0.1">
+                        <span class="prob-label">%</span>
+                        <button class="btn-save-prob" data-id="${p.id}">💾</button>
+                    </div>
+                    <div class="prize-colors">
+                        <input type="color" class="color-input" value="${p.color || '#1a1a1f'}" data-field="color" data-id="${p.id}">
+                        <input type="color" class="color-input" value="${p.color2 || '#0a0a0f'}" data-field="color2" data-id="${p.id}">
+                    </div>
+                    <button class="btn-delete" data-id="${p.id}">✕</button>
+                </div>
+            `).join('');
 
             list.querySelectorAll('.name-input').forEach(input => {
-                input.addEventListener('change', async function() {
+                input.addEventListener('change', async function () {
                     const item = this.closest('.prize-item');
                     const id = parseInt(item.dataset.id);
                     const value = this.value.trim();
-                    if (!value) { showError('⚠️ الاسم مطلوب'); this.value = item.querySelector('.name-input').dataset.oldValue || ''; return; }
+                    if (!value) {
+                        showError('⚠️ الاسم مطلوب');
+                        this.value = this.dataset.oldValue || '';
+                        return;
+                    }
                     const success = await updatePrize(id, { name: value });
-                    if (success) { await refreshAll(); showNotification('✅ تم تحديث الاسم'); }
-                    else { showError('❌ فشل تحديث الاسم'); await refreshAll(); }
+                    if (success) {
+                        await refreshAll();
+                        showNotification('✅ تم تحديث الاسم');
+                    } else {
+                        showError('❌ فشل تحديث الاسم');
+                        await refreshAll();
+                    }
                 });
-                input.addEventListener('focus', function() { this.dataset.oldValue = this.value; });
+                input.addEventListener('focus', function () {
+                    this.dataset.oldValue = this.value;
+                });
             });
+
             list.querySelectorAll('.desc-input').forEach(input => {
-                input.addEventListener('change', async function() {
+                input.addEventListener('change', async function () {
                     const item = this.closest('.prize-item');
                     const id = parseInt(item.dataset.id);
                     const value = this.value.trim();
                     const success = await updatePrize(id, { description: value });
-                    if (success) { await refreshAll(); showNotification('✅ تم تحديث الوصف'); }
-                    else { showError('❌ فشل تحديث الوصف'); await refreshAll(); }
+                    if (success) {
+                        await refreshAll();
+                        showNotification('✅ تم تحديث الوصف');
+                    } else {
+                        showError('❌ فشل تحديث الوصف');
+                        await refreshAll();
+                    }
                 });
             });
+
             list.querySelectorAll('.prob-input').forEach(input => {
-                input.addEventListener('change', async function() {
+                input.addEventListener('change', async function () {
                     const item = this.closest('.prize-item');
                     const id = parseInt(item.dataset.id);
                     const val = parseFloat(this.value);
                     if (isNaN(val) || val < 0) { this.value = 0; return; }
                     if (val > 100) { this.value = 100; }
                     const success = await updatePrize(id, { probability: parseFloat(this.value) });
-                    if (success) { await refreshAll(); showNotification('✅ تم تحديث النسبة'); }
-                    else { showError('❌ فشل تحديث النسبة'); await refreshAll(); }
+                    if (success) {
+                        await refreshAll();
+                        showNotification('✅ تم تحديث النسبة');
+                    } else {
+                        showError('❌ فشل تحديث النسبة');
+                        await refreshAll();
+                    }
                 });
             });
+
             list.querySelectorAll('.btn-save-prob').forEach(btn => {
-                btn.addEventListener('click', async function() {
+                btn.addEventListener('click', async function () {
                     const item = this.closest('.prize-item');
                     const id = parseInt(item.dataset.id);
                     const input = item.querySelector('.prob-input');
@@ -2412,35 +2002,55 @@
                     if (isNaN(val) || val < 0) { input.value = 0; return; }
                     if (val > 100) { input.value = 100; }
                     const success = await updatePrize(id, { probability: parseFloat(input.value) });
-                    if (success) { await refreshAll(); showNotification('✅ تم حفظ النسبة'); }
-                    else { showError('❌ فشل حفظ النسبة'); await refreshAll(); }
+                    if (success) {
+                        await refreshAll();
+                        showNotification('✅ تم حفظ النسبة');
+                    } else {
+                        showError('❌ فشل حفظ النسبة');
+                        await refreshAll();
+                    }
                 });
             });
+
             list.querySelectorAll('.color-input').forEach(input => {
-                input.addEventListener('change', async function() {
+                input.addEventListener('change', async function () {
                     const id = parseInt(this.dataset.id);
                     const field = this.dataset.field;
+                    const value = this.value;
                     const updateData = {};
-                    updateData[field] = this.value;
+                    updateData[field] = value;
                     const success = await updatePrize(id, updateData);
-                    if (success) { await refreshAll(); showNotification(`✅ تم تحديث اللون`); }
-                    else { showError('❌ فشل تحديث اللون'); await refreshAll(); }
+                    if (success) {
+                        await refreshAll();
+                        showNotification(`✅ تم تحديث اللون`);
+                    } else {
+                        showError('❌ فشل تحديث اللون');
+                        await refreshAll();
+                    }
                 });
             });
+
             list.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', async function() {
+                btn.addEventListener('click', async function () {
                     const id = parseInt(this.dataset.id);
                     const item = this.closest('.prize-item');
                     const name = item.querySelector('.name-input').value || 'هذه الجائزة';
                     if (confirm(`⚠️ هل أنت متأكد من حذف "${name}"؟`)) {
                         const success = await deletePrize(id);
-                        if (success) { await refreshAll(); showNotification(`✅ تم حذف "${name}"`); }
-                        else { showError('❌ فشل حذف الجائزة'); }
+                        if (success) {
+                            await refreshAll();
+                            showNotification(`✅ تم حذف "${name}"`);
+                        } else {
+                            showError('❌ فشل حذف الجائزة');
+                        }
                     }
                 });
             });
         }
 
+        // ================================================================
+        //                      تحميل الجوائز
+        // ================================================================
         async function loadPrizes() {
             try {
                 const res = await connectionManager.fetchWithRetry(`${API_BASE}/api/prizes`);
@@ -2449,7 +2059,6 @@
                     prizesCache = data.prizes;
                     return data.prizes;
                 }
-                prizesCache = [];
                 return [];
             } catch (e) {
                 console.error('Error loading prizes:', e);
@@ -2458,6 +2067,9 @@
             }
         }
 
+        // ================================================================
+        //                      حالة المستخدم
+        // ================================================================
         async function loadUserStatus() {
             if (!USER_ID) return;
             try {
@@ -2466,13 +2078,16 @@
                 if (data.success) {
                     const depositNotice = document.getElementById('depositNotice');
                     const depositStatus = document.getElementById('depositStatus');
+
                     if (data.deposit_requirement?.required) {
                         const minAmount = data.deposit_requirement.min_amount || 0;
                         const checkHours = data.deposit_requirement.check_hours || 24;
                         const currentDeposits = data.deposit_requirement.current_deposits || 0;
                         const isMet = data.deposit_requirement.is_met || false;
+
                         document.getElementById('depositMinAmount').textContent = minAmount;
                         document.getElementById('depositCheckHours').textContent = checkHours;
+
                         depositNotice.classList.add('show');
                         if (isMet) {
                             depositStatus.innerHTML = `الحالة: <span class="met">✅ مكتمل (${currentDeposits} SYP)</span>`;
@@ -2482,20 +2097,24 @@
                     } else {
                         depositNotice.classList.remove('show');
                     }
+
                     const spinBtn = document.getElementById('spinBtn');
                     const canSpin = data.spin_status?.can_spin !== false &&
                         (!data.deposit_requirement?.required || data.deposit_requirement?.is_met);
+
                     if (canSpin && prizesCache.length > 0) {
                         spinBtn.disabled = false;
-                        document.getElementById('spinBtnText').textContent = '🔥 دوّر العجلة النارية';
+                        document.getElementById('spinBtnText').textContent = '🌋 تدوير العجلة';
                     } else if (!data.spin_status?.can_spin) {
                         spinBtn.disabled = true;
                         const h = data.spin_status?.remaining_hours || 0;
                         const m = data.spin_status?.remaining_minutes || 0;
                         document.getElementById('spinBtnText').textContent = `⏳ ${h}h ${m}m`;
+                        soundManager.stopAll();
                     } else if (data.deposit_requirement?.required && !data.deposit_requirement?.is_met) {
                         spinBtn.disabled = true;
                         document.getElementById('spinBtnText').textContent = '💰 إيداع مطلوب';
+                        soundManager.stopAll();
                     } else {
                         spinBtn.disabled = true;
                         document.getElementById('spinBtnText').textContent = '⏳ جاري التحميل...';
@@ -2507,6 +2126,9 @@
             }
         }
 
+        // ================================================================
+        //                      تحديث الكل
+        // ================================================================
         async function refreshAll() {
             await loadSettings();
             const prizes = await loadPrizes();
@@ -2515,10 +2137,13 @@
             await renderAdminPanel();
         }
 
+        // ================================================================
+        //                      تأثيرات الاحتفال
+        // ================================================================
         function createConfetti(count = 60) {
             const container = document.getElementById('confettiContainer');
             container.innerHTML = '';
-            const colors = ['#FFD700', '#FF6B00', '#FF2200', '#FF0000', '#FF6600', '#FFAA00', '#FF4400', '#FF8800'];
+            const colors = ['#FFD700', '#FF6B00', '#FF4500', '#FFB300', '#FF0000', '#FF8C00', '#FF2400'];
             for (let i = 0; i < count; i++) {
                 const el = document.createElement('div');
                 el.className = 'confetti';
@@ -2540,33 +2165,47 @@
             const resultBox = document.getElementById('resultBox');
             resultBox.classList.add('winner');
             createConfetti(60);
-            showNotification(`🔥 مبروك! لقد فزت بـ ${prizeName}!`);
+            showNotification(`🎉 مبروك! لقد فزت بـ ${prizeName}!`);
         }
 
         function clearWinEffects() {
-            document.getElementById('resultBox').classList.remove('winner');
+            const resultBox = document.getElementById('resultBox');
+            resultBox.classList.remove('winner');
         }
 
         function showNotification(message) {
             const bar = document.getElementById('notificationBar');
-            document.getElementById('notifPrizeName').textContent =
-                message.replace('🔥 مبروك! لقد فزت بـ ', '').replace('!', '');
+            document.getElementById('notifPrizeName').textContent = message
+                .replace('🎉 مبروك! لقد فزت بـ ', '')
+                .replace('!', '');
             bar.classList.add('show');
             setTimeout(() => { bar.classList.remove('show'); }, 4000);
         }
 
+        // ================================================================
+        //                      اللودينغ
+        // ================================================================
         function updateLoading(progress) {
-            document.getElementById('loaderProgressBar').style.width = progress + '%';
-            document.getElementById('loaderStatusText').textContent = progress + '%';
+            const bar = document.getElementById('loaderProgressBar');
+            const text = document.getElementById('loaderStatusText');
+            bar.style.width = progress + '%';
+            text.textContent = progress + '%';
         }
 
         function showLoading(show) {
             const screen = document.getElementById('loadingScreen');
             const wrapper = document.getElementById('wheelWrapper');
-            if (show) { screen.classList.add('active'); wrapper.classList.remove('show'); }
-            else { screen.classList.remove('active'); wrapper.classList.add('show'); }
+            if (show) {
+                screen.classList.add('active');
+                wrapper.classList.remove('show');
+            } else {
+                screen.classList.remove('active');
+            }
         }
 
+        // ================================================================
+        //                      فحص الاتصال
+        // ================================================================
         async function checkConnection() {
             try {
                 await connectionManager.fetchWithRetry(`${API_BASE}/api/status`);
@@ -2578,28 +2217,29 @@
         }
 
         // ================================================================
-        //                      تدوير العجلة
+        //                      التدوير
         // ================================================================
         async function spinWheel() {
             if (isSpinning || !USER_ID) return;
             if (document.getElementById('spinBtn').disabled) return;
-            if (prizesCache.length === 0) { showError('لا توجد جوائز متاحة'); return; }
+            if (prizesCache.length === 0) {
+                showError('لا توجد جوائز متاحة');
+                return;
+            }
 
             isSpinning = true;
             const spinBtn = document.getElementById('spinBtn');
             spinBtn.disabled = true;
             spinBtn.classList.add('loading');
-            document.getElementById('spinBtnText').textContent = '🔥 جاري التدوير...';
+            document.getElementById('spinBtnText').textContent = 'جاري التدوير...';
 
             document.getElementById('resultBox').classList.remove('show');
             document.getElementById('errorMsg').classList.remove('show');
             clearWinEffects();
 
-            // إيقاف صوت الخلفية أثناء التدوير
             soundManager.init();
-            soundManager.stopAmbient();
             soundManager.playStartSound();
-            setTimeout(() => soundManager.playSpinSound(), 250);
+            soundManager.playSpinSound();
 
             try {
                 const response = await connectionManager.fetchWithRetry(`${API_BASE}/api/wheel/spin`, {
@@ -2617,38 +2257,47 @@
                     const prizeIndex = prizesCache.findIndex(p => p.id === prize.id);
                     const isWin = !prize.name.includes('حظ سعيد');
 
-                    let finalIndex = prizeIndex;
-                    if (finalIndex === -1) finalIndex = Math.floor(Math.random() * prizesCache.length);
+                    if (prizeIndex === -1) {
+                        const randomIndex = Math.floor(Math.random() * prizesCache.length);
+                        const targetAngle = (randomIndex / prizesCache.length) * 2 * Math.PI;
+                        const totalRotation = currentRotation + (4 * 2 * Math.PI) +
+                            (2 * Math.PI - targetAngle - (step / 2));
 
-                    const targetAngle = (finalIndex / prizesCache.length) * 2 * Math.PI;
-                    const totalRotation = currentRotation + (4 * 2 * Math.PI) + (2 * Math.PI - targetAngle - (step / 2));
+                        animateSpin(totalRotation, spinDuration, () => {
+                            drawWheel(prizesCache, randomIndex, totalRotation);
+                            showResult(prizesCache[randomIndex], isWin);
+                        });
+                    } else {
+                        const targetAngle = (prizeIndex / prizesCache.length) * 2 * Math.PI;
+                        const totalRotation = currentRotation + (4 * 2 * Math.PI) +
+                            (2 * Math.PI - targetAngle - (step / 2));
 
-                    animateSpin(totalRotation, spinDuration, () => {
-                        drawWheel(prizesCache, finalIndex, totalRotation);
-                        showResult(prizeIndex === -1 ? prizesCache[finalIndex] : prize, isWin);
-                    });
+                        animateSpin(totalRotation, spinDuration, () => {
+                            drawWheel(prizesCache, prizeIndex, totalRotation);
+                            showResult(prize, isWin);
+                        });
+                    }
                 } else {
                     showError(data.error || 'حدث خطأ');
                     if (data.remaining_hours !== undefined) {
-                        spinBtn.disabled = true;
-                        document.getElementById('spinBtnText').textContent = `⏳ ${data.remaining_hours}h ${data.remaining_minutes}m`;
+                        const btn = document.getElementById('spinBtn');
+                        btn.disabled = true;
+                        document.getElementById('spinBtnText').textContent =
+                            `⏳ ${data.remaining_hours}h ${data.remaining_minutes}m`;
+                        soundManager.stopAll();
                     }
                     drawWheel(prizesCache, -1, currentRotation);
-                    soundManager.stopAll();
-                    // إعادة صوت الخلفية
-                    setTimeout(() => soundManager.startAmbient(), 500);
                 }
             } catch (e) {
                 spinBtn.classList.remove('loading');
                 showError('خطأ في الاتصال: ' + e.message);
                 drawWheel(prizesCache, -1, currentRotation);
                 soundManager.stopAll();
-                setTimeout(() => soundManager.startAmbient(), 500);
             }
 
             isSpinning = false;
             if (!document.getElementById('spinBtn').disabled) {
-                document.getElementById('spinBtnText').textContent = '🔥 دوّر العجلة النارية';
+                document.getElementById('spinBtnText').textContent = '🌋 تدوير العجلة';
             }
         }
 
@@ -2658,16 +2307,17 @@
         function showResult(prize, isWin) {
             document.getElementById('prizeDesc').textContent = prize.description || prize.name || 'جائزة!';
             document.getElementById('resultBox').classList.add('show');
-            soundManager.stopSpinSound();
+
+            soundManager.stopAll();
+
             if (isWin) {
                 createWinEffects(prize.description || prize.name);
                 soundManager.playWinSound();
             } else {
                 soundManager.playLoseSound();
             }
+
             loadUserStatus();
-            // إعادة صوت الخلفية بعد 3 ثوان
-            setTimeout(() => soundManager.startAmbient(), 3000);
         }
 
         function showError(msg) {
@@ -2681,13 +2331,16 @@
         //                      أحداث الإدارة
         // ================================================================
         document.querySelectorAll('.btn-save').forEach(btn => {
-            btn.addEventListener('click', async function() {
+            btn.addEventListener('click', async function () {
                 const key = this.dataset.setting;
                 const fieldId = this.dataset.field;
                 const type = this.dataset.type || 'text';
                 let value = '';
-                if (type === 'checkbox') value = document.getElementById(fieldId).checked;
-                else value = document.getElementById(fieldId).value;
+                if (type === 'checkbox') {
+                    value = document.getElementById(fieldId).checked;
+                } else {
+                    value = document.getElementById(fieldId).value;
+                }
                 const originalText = this.textContent;
                 this.textContent = '⏳ جاري...';
                 this.disabled = true;
@@ -2703,29 +2356,44 @@
                     }, 2000);
                 } else {
                     this.textContent = '❌ فشل';
-                    setTimeout(() => { this.textContent = originalText; this.disabled = false; }, 2000);
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.disabled = false;
+                    }, 2000);
                 }
             });
         });
 
-        document.getElementById('addPrizeBtn').addEventListener('click', async function() {
+        document.getElementById('addPrizeBtn').addEventListener('click', async function () {
             const nameInput = document.getElementById('newPrizeName');
             const iconInput = document.getElementById('newPrizeIcon');
             const descInput = document.getElementById('newPrizeDesc');
             const probInput = document.getElementById('newPrizeProb');
             const colorInput = document.getElementById('newPrizeColor');
             const color2Input = document.getElementById('newPrizeColor2');
+
             const name = nameInput.value.trim();
             const icon = iconInput.value.trim() || '🎁';
             const description = descInput.value.trim() || '';
             const prob = parseFloat(probInput.value) || 10;
-            const color = colorInput.value || '#1a1a2e';
-            const color2 = color2Input.value || '#16213e';
-            if (!name) { showError('⚠️ الرجاء إدخال اسم الجائزة'); nameInput.focus(); return; }
-            if (prob < 0 || prob > 100) { showError('⚠️ النسبة يجب أن تكون بين 0 و 100'); probInput.focus(); return; }
+            const color = colorInput.value || '#1a1a1f';
+            const color2 = color2Input.value || '#0a0a0f';
+
+            if (!name) {
+                showError('⚠️ الرجاء إدخال اسم الجائزة');
+                nameInput.focus();
+                return;
+            }
+            if (prob < 0 || prob > 100) {
+                showError('⚠️ النسبة يجب أن تكون بين 0 و 100');
+                probInput.focus();
+                return;
+            }
+
             const btn = this;
             btn.disabled = true;
             btn.textContent = '⏳';
+
             const success = await addPrize(name, icon, description, prob, color, color2);
             if (success) {
                 nameInput.value = '';
@@ -2734,46 +2402,87 @@
                 probInput.value = '';
                 await refreshAll();
                 showNotification(`✅ تم إضافة "${name}" بنجاح`);
-            } else { showError('❌ فشل إضافة الجائزة'); }
+            } else {
+                showError('❌ فشل إضافة الجائزة');
+            }
             btn.disabled = false;
             btn.textContent = '➕';
         });
 
-        document.getElementById('refreshPrizesBtn').addEventListener('click', async function() {
+        document.getElementById('refreshPrizesBtn').addEventListener('click', async function () {
             await refreshAll();
             showNotification('🔄 تم تحديث الكل');
         });
 
-        document.getElementById('resetPrizesBtn').addEventListener('click', async function() {
+        document.getElementById('resetPrizesBtn').addEventListener('click', async function () {
             if (confirm('⚠️ هل أنت متأكد من إعادة تعيين جميع الجوائز إلى الإعدادات الافتراضية؟')) {
                 const success = await resetPrizes();
-                if (success) { await refreshAll(); showNotification('✅ تم إعادة تعيين الجوائز'); }
-                else { showError('❌ فشل إعادة التعيين'); }
+                if (success) {
+                    await refreshAll();
+                    showNotification('✅ تم إعادة تعيين الجوائز');
+                } else {
+                    showError('❌ فشل إعادة التعيين');
+                }
             }
         });
 
-        document.getElementById('soundToggle').addEventListener('change', function() {
+        document.getElementById('soundToggle').addEventListener('change', function () {
             soundEnabled = this.checked;
             if (!soundEnabled) {
                 soundManager.stopAll();
             } else {
                 soundManager.init();
-                soundManager.startAmbient();
             }
         });
+
+        // ================================================================
+        //                      مشهد القلعة + شرارات الحمم
+        // ================================================================
+        function playCastleScene() {
+            return new Promise((resolve) => {
+                const scene = document.getElementById('castleScene');
+                scene.classList.add('active');
+                scene.style.display = 'flex';
+                setTimeout(() => {
+                    scene.classList.remove('active');
+                    scene.style.display = 'none';
+                    resolve();
+                }, 8200);
+            });
+        }
+
+        function spawnLavaSparks() {
+            const container = document.getElementById('lavaSparks');
+            if (!container) return;
+            setInterval(() => {
+                if (document.getElementById('wheelWrapper').classList.contains('show')) {
+                    const spark = document.createElement('div');
+                    spark.className = 'lava-spark';
+                    spark.style.left = (10 + Math.random() * 80) + '%';
+                    spark.style.bottom = (5 + Math.random() * 30) + '%';
+                    spark.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+                    spark.style.width = spark.style.height = (3 + Math.random() * 5) + 'px';
+                    container.appendChild(spark);
+                    setTimeout(() => spark.remove(), 5000);
+                }
+            }, 350);
+        }
 
         // ================================================================
         //                      التهيئة
         // ================================================================
         async function init() {
             USER_ID = getUserId();
+
             if (!USER_ID) {
                 document.getElementById('errorContainer').classList.add('show');
                 document.getElementById('userStatus').style.display = 'none';
                 return;
             }
+
             showLoading(true);
             updateLoading(0);
+
             try {
                 let progress = 0;
                 const interval = setInterval(() => {
@@ -2794,33 +2503,44 @@
 
                 updateLoading(30);
                 await new Promise(r => setTimeout(r, 300));
+
                 await loadSettings();
                 updateLoading(50);
                 await new Promise(r => setTimeout(r, 300));
+
                 const prizes = await loadPrizes();
                 drawWheel(prizes, -1, 0);
                 updateLoading(70);
                 await new Promise(r => setTimeout(r, 300));
+
                 await loadUserStatus();
                 updateLoading(85);
                 await new Promise(r => setTimeout(r, 300));
+
                 await renderAdminPanel();
                 updateLoading(95);
                 await new Promise(r => setTimeout(r, 300));
+
                 clearInterval(interval);
                 updateLoading(100);
                 await new Promise(r => setTimeout(r, 500));
+
                 soundManager.init();
-                // بدء صوت الخلفية (هدير لهب هادئ)
-                setTimeout(() => soundManager.startAmbient(), 300);
+
+                // إخفاء اللودينغ → تشغيل مشهد القلعة → كشف العجلة
+                showLoading(false);
+                await playCastleScene();
+                document.getElementById('wheelWrapper').classList.add('show');
+                spawnLavaSparks();
+                document.getElementById('spinBtn').onclick = spinWheel;
+
             } catch (e) {
                 console.error('Init error:', e);
                 updateLoading(100);
                 await new Promise(r => setTimeout(r, 600));
                 showError('⚠️ فشل تحميل البيانات: ' + e.message);
+                showLoading(false);
             }
-            showLoading(false);
-            document.getElementById('spinBtn').onclick = spinWheel;
         }
 
         document.addEventListener('DOMContentLoaded', init);
